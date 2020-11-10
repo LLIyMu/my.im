@@ -75,14 +75,16 @@ abstract class BaseController
         extract($parameters);
         //если в путь ничего не пришло, формирую дефолтный путь до индексного файла
         if (!$path) {
-
+            // сохраняю в переменную $class объект класса ReflectionClass ($this) он предоставляет доступ к классу
+            // объектом которого он является
             $class = new \ReflectionClass($this);
-
+            // получаю в переменную пространство имён объектом которого является $this при этом заменяю слеши на обычные
             $space = str_replace('\\', '/', $class->getNamespaceName() . '\\');
-
+            // получаю роуты из класса настроек для правильных маршрутов
             $routes = Settings::get('routes');
-
+            // если $space строго равно маршруту user подключаю шаблон по умолчанию
             if ($space === $routes['user']['path']) $template = TEMPLATE;
+            // иначе подключаю админку
             else   $template = ADMIN_TEMPLATE;
             // сохраняю путь разбирая строку убирая controller из полученной строки и переводя строку в нижний регистр с
             // помощью strtoLower()
