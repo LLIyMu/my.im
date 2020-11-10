@@ -8,14 +8,10 @@ class IndexController extends BaseController {
 
     protected $name;
     //входной метод для формирования данных и подготовки их к методу $outputData
+
     protected function inputData() {
-        $name = 'Natalya';
-
-        $content = $this->render('', compact('name'));
-        $header = $this->render(TEMPLATE.'header');
-        $footer = $this->render(TEMPLATE.'footer');
-
-        return compact('header', 'content', 'footer');
+        $this->init();
+        exit();
     }
     //метод для вывода данных и формирования видов-шаблонов
     protected function outputData() {

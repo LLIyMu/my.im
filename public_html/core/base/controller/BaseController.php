@@ -9,6 +9,7 @@ use core\base\settings\Settings;
 
 abstract class BaseController
 {
+    use \core\base\controller\BaseMethods;
     //переменная для отображения страниц-видов-шаблонов
     protected $page;
     //для хранения ошибок
