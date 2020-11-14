@@ -6,30 +6,13 @@ namespace core\base\controller;
 
 use core\base\exceptions\RouteException;
 use core\base\settings\Settings;
-use core\base\settings\ShopSettings;
 
 class RouteController extends BaseController
 {
-    // приватное статическое свойство в котором хранится ссылка на объект класса RouteController
-    static  private $_instance;
+    // использую трейт
+    use Singleton;
     // свойство маршрутов
     protected $routes;
-
-
-    // магический метод __clone клонирует объект класса
-    private function __clone()
-    {
-        // TODO: Implement __clone() method.
-    }
-    // статичный метод класса вызывается без создания объекта класса
-    static public function getInstance(){
-        // если в свойстве $_instance хранится объект класса, то возвращаем объект класса
-        if (self::$_instance instanceof self){
-            return self::$_instance;
-        }
-        // если нет объекта, то создаем его и возвращаем свойсвто с объектом
-        return self::$_instance = new self;
-    }
     // магический метод __construct выполняется каждый раз при создании объекта класса
     private function __construct()
     {
@@ -41,13 +24,12 @@ class RouteController extends BaseController
         }
         // сохранил в переменную $path обрезанную строку в которой содержиться имя выполнения скрипта
         $path = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], 'index.php'));
-
         // если $path равна константе PATH
         if ($path === PATH) {
             // сохраняю маршруты в свойство $routes с помощью метода get класса Settings
             $this->routes = Settings::get('routes');
             //если маршруты не были получены выбрасываю сообщение
-            if (!$this->routes) throw new RouteException('Сайт находится на техническом обслуживании');
+            if (!$this->routes) throw new RouteException('Отсутствуют маршруты в базовых настройках', 1);
             //сохраняю в переменную $url, получаю массив с разделителем '/', обрезаю адресную строку с помощью
             // конструкции substr где первый элемент это PATH т.е. начиная с '/' возвращаю путь в $url
             $url = explode('/', substr($address_arr, strlen(PATH)));
@@ -128,12 +110,7 @@ class RouteController extends BaseController
                 }
             }
         }else{ // если не равна то выбрасываем исключения
-            try{
-                throw new \Exception('Не корректная директория сайта');
-            }
-            catch (\Exception $e) {
-                exit($e->getMessage());
-            }
+            throw new RouteException('Не корректная директория сайта', 1);
         }
     }
     // метод для создания маршрутов пользовательской и административной части сайта, принимает на вход

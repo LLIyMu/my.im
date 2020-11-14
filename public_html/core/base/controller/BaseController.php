@@ -9,6 +9,7 @@ use core\base\settings\Settings;
 
 abstract class BaseController
 {
+    // подключаю трейт что бы использовать во всех классах наследующих базовый класс
     use \core\base\controller\BaseMethods;
     //переменная для отображения страниц-видов-шаблонов
     protected $page;
@@ -22,6 +23,9 @@ abstract class BaseController
     protected $outputMethod;
     // свойство параметров
     protected $parameters;
+
+    protected $styles;
+    protected $scripts;
     // метод обрабатывающий входящие парматеры и передающий их методу request()
     public function route(){
         //сохраняю в переменную $controller имя класса с правильным слешем получаю из адресной строки
@@ -40,7 +44,7 @@ abstract class BaseController
             // параметром идёт объект класса ($controller) а вторым массив $args
             $object->invoke(new $controller, $args);
         }
-        catch (\ReflectionException $e) {
+        catch (\ReflectionException $e){
             throw new RouteException($e->getMessage());
         }
 
@@ -65,7 +69,7 @@ abstract class BaseController
         }
         //если в свойство ошибок что то попало то вызываю метод записи логирования ошибок
         if ($this->errors) {
-            $this->writeLog();
+            $this->writeLog($this->errors);
         }
         //завершаю работу скрипта вызовом метода getPage() он выводит готовую страницу
         $this->getPage();
@@ -109,5 +113,26 @@ abstract class BaseController
         }
         //завершаю работу скрипта
         exit();
+    }
+
+    // инициализирую подключение стилей и скриптов
+    protected function init($admin = false){
+        // если это не админка подключаю USER стили и скрипты
+        if (!$admin){
+            if (USER_CSS_JS['styles']){
+                foreach (USER_CSS_JS['styles'] as $item) $this->styles[] = PATH . TEMPLATE . trim($item, '/');
+            }
+            if (USER_CSS_JS['scripts']){
+                foreach (USER_CSS_JS['scripts'] as $item) $this->scripts[] = PATH . TEMPLATE . trim($item, '/');
+            }
+        }else{ //иначе подключаю ADMIN стили и скрипты
+            if (ADMIN_CSS_JS['styles']){
+                foreach (ADMIN_CSS_JS['styles'] as $item) $this->styles[] = PATH . ADMIN_TEMPLATE . trim($item, '/');
+            }
+            if (ADMIN_CSS_JS['scripts']){
+                foreach (ADMIN_CSS_JS['scripts'] as $item) $this->scripts[] = PATH . ADMIN_TEMPLATE . trim($item, '/');
+            }
+        }
+
     }
 }

@@ -11,13 +11,19 @@ session_start();
 require_once 'config.php';
 require_once 'core/base/settings/internal_settings.php';
 
+use core\base\exceptions\DbException;
 use core\base\exceptions\RouteException;
 use core\base\controller\RouteController;
+
 //ловлю исключения
 try{//попытаться выполнить код RouteController
-    RouteController::getInstance()->route();
+    RouteController::Instance()->route();
 }
-catch (RouteException $e) { // ловлю trow и вывожу исключение и завершаю работу скрипта
+catch (RouteException $e) { // ловлю исключение, завершаю работу скрипта при этом вызывая сообщение об ошибке
+
+    exit($e->getMessage());
+}
+catch (DbException $e) { // тоже самое но для баз данных
     exit($e->getMessage());
 }
 

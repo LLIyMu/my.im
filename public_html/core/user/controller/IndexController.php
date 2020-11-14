@@ -10,15 +10,14 @@ class IndexController extends BaseController {
     //входной метод для формирования данных и подготовки их к методу $outputData
 
     protected function inputData() {
-        $this->init();
         exit();
     }
     //метод для вывода данных и формирования видов-шаблонов
-    protected function outputData() {
+    /*protected function outputData() {
         //сохраняю в переменную нулевой(первый) аргумент
         $vars = func_get_arg(0);
         //в переменную $page записываю путь до шаблона и аргументы полученные на входе
         $this->page = $this->render(TEMPLATE.'templater', $vars);
-    }
+    }*/
 
 }

@@ -4,10 +4,12 @@
 namespace core\base\settings;
 
 
+use core\base\controller\Singleton;
+
 class Settings
 {
-    // приватное статическое свойство в котором хранится ссылка на объект класса Settings
-    static private $_instance;
+    // использую трейт
+    use Singleton;
 
     //маршруты, не изменяемые извне
     private $routes = [
@@ -39,38 +41,17 @@ class Settings
             'inputMethod' => 'inputData',//метод по умолчанию который вызывается у контроллера, если по маршруту не
                                          // определился метод вызова
             'outputMethod' => 'outputData'// метод вывода данных
-        ]
+        ],
     ];
 
     private $templateArr = [
         'text' => ['name', 'phone', 'address'],
         'textarea' => ['content', 'keywords']
     ];
-
-    // магический метод __construct выполняется каждый раз при создании объекта класса
-    private function __construct()
-    {
-    }
-    // магический метод __clone клонирует объект класса
-    private function __clone()
-    {
-        // TODO: Implement __clone() method.
-    }
     // метод get() обращается к методу instance() который содержит в себе ссылку на объект класса
     static public function get($property){
         return self::instance()->$property;
     }
-
-    // статичный метод класса вызывается без создания объекта класса
-    static public function instance(){
-        // если в свойстве $_instance хранится объект класса, то возвращаем объект класса
-        if (self::$_instance instanceof self){
-            return self::$_instance;
-        }
-        // если нет объекта, то создаем его и возвращаем свойсвто с объектом
-        return self::$_instance = new self;
-    }
-
     // метод для склейки массивов на вход принимает класс
     public function clueProperties($class){
         $baseProperties = [];

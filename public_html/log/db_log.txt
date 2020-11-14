@@ -1,0 +1,16 @@
+Fault: 12-11-2020 13:09:47 - Ошибка в SQL запросеSELECT * FROM articles1 - 1146 Table 'im.articles1' doesn't exist
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 38
+
+Fault: 12-11-2020 13:12:50 - Ошибка в SQL запросе: SELECT name12 FROM articles1 - 1146 Table 'im.articles1' doesn't exist
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 38
+
+Fault: 12-11-2020 13:13:46 - Ошибка в SQL запросе: SELECT name12 FROM articles - 1054 Unknown column 'name12' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 38
+
+Fault: 14-11-2020 4:36:20 - Ошибка в SQL запросе: SELECT teachers.id,teachers.name FROM teachers   ORDER BY teachers.fio ASC,teachers.name ASC 1 - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 39
+

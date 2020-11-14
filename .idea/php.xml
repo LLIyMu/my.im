@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="PhpProjectServersManager">
+    <servers>
+      <server host="my.im" id="d8a50dcd-7a95-41e9-a76c-ce0f615164cc" name="my.im">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$/public_html/index.php" remote-root="F:/OpenServer/domains/my.im/public_html/index.php" />
+        </path_mappings>
+      </server>
+    </servers>
+  </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
 </project>
