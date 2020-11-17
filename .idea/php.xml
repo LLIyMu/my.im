@@ -4,10 +4,20 @@
     <servers>
       <server host="my.im" id="d8a50dcd-7a95-41e9-a76c-ce0f615164cc" name="my.im">
         <path_mappings>
-          <mapping local-root="$PROJECT_DIR$/public_html/index.php" remote-root="F:/OpenServer/domains/my.im/public_html/index.php" />
+          <mapping local-root="$PROJECT_DIR$/public_html/index.php" remote-root="F:/OpenServer/domains/my.im/public_html" />
         </path_mappings>
       </server>
     </servers>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
+  <component name="PhpStepFilterConfiguration">
+    <skipped_functions>
+      <skipped_function name="core\base\model\BaseModel-&gt;get" />
+    </skipped_functions>
+    <option name="skippedFunctions">
+      <list>
+        <option value="core\base\model\BaseModel-&gt;get" />
+      </list>
+    </option>
+  </component>
 </project>

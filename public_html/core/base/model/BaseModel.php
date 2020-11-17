@@ -93,7 +93,7 @@ class BaseModel
 
         $fields = $this->createFields($table, $set);
 
-        $order = $this->createOrder($table, $set);
+        $order = $this->rder($table, $set);
 
         $where = $this->createWhere($table, $set);
 
@@ -119,7 +119,7 @@ class BaseModel
         // если в $set пришел массив и он не пуст, то записываю, если нет записываю символ выбрать всё ['*']
         $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : ['*'];
         // если в $table что то пришло то записываю и конкатенирую точку,
-        $table = $table ? $table . '.': '';
+        $table = $table ? $table . '.' : '';
 
         $fields = '';
 
@@ -138,8 +138,8 @@ class BaseModel
         // если $set масив и он не пустой
         if (is_array($set['order']) && !empty($set['order'])){
             // если есть order_direction и он является массиво и он не пустой я его записываю, иначе записываю ['ASC']
-            $set['order_direction'] =
-                (is_array($set['order_direction']) && !empty($set['order_direction']))
+            $set['order_direction'] = (is_array($set['order_direction'])
+                && !empty($set['order_direction']))
                     ? $set['order_direction'] : ['ASC'];
             // по умолчанию записываю в переменную 'ORDER BY '
             $order_by = 'ORDER BY ';
@@ -147,7 +147,7 @@ class BaseModel
             $direct_count = 0;
 
             foreach ($set['order'] as $order){
-                // если есть $set['order_direction'] и его ячейка [$direct_count]
+                // если существует $set['order_direction'] и его ячейка [$direct_count]
                 if($set['order_direction'][$direct_count]){
                     // записываю в переменную в верхнем регистре значение
                     $order_direction = strtoupper($set['order_direction'][$direct_count]);
@@ -217,15 +217,41 @@ class BaseModel
                             $in_str .= "'" . trim($v) . "',";
                         }
                     }
+                    $where .= $table . $key . ' ' . $operand . ' (' .trim($in_str, ',') . ') ' . $condition;
 
-                    $where .= $table . $key . $operand . ' (' .trim($in_str) . ')' . $condition;
-                    exit();
+                }elseif (strpos($operand, 'LIKE') !== false){
+
+                    $like_template = explode( '%', $operand);
+
+                    foreach ($like_template as $lt_key => $it){
+                        if(!$it){
+                            if(!$lt_key){
+                                $item = '%' . $item;
+                            }else{
+                                $item .= '%';
+                            }
+                        }
+                    }
+
+                    $where .= $table . $key . ' LIKE ' . "'" . $item . "' $condition";
+
+                }else{
+
+                    if (strpos($item, 'SELECT') === 0){
+                        $where .= $table . $key . $operand . '(' . $item . ") $condition";
+                    }else{
+                        $where .= $table . $key . $operand . "'" . $item . "' $condition";
+                    }
+
                 }
 
             }
 
+            $where = substr($where, 0, strrpos($where, $condition));
 
         }
+
+        return $where;
     }
 
 }
