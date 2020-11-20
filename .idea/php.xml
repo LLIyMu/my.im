@@ -12,11 +12,13 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
   <component name="PhpStepFilterConfiguration">
     <skipped_functions>
-      <skipped_function name="core\base\model\BaseModel-&gt;get" />
+      <skipped_function name="core\base\model\BaseModel-&gt;createInsert" />
+      <skipped_function name="core\base\model\BaseModel-&gt;add" />
     </skipped_functions>
     <option name="skippedFunctions">
       <list>
-        <option value="core\base\model\BaseModel-&gt;get" />
+        <option value="core\base\model\BaseModel-&gt;createInsert" />
+        <option value="core\base\model\BaseModel-&gt;add" />
       </list>
     </option>
   </component>

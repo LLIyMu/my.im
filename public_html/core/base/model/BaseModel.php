@@ -1,13 +1,12 @@
 <?php
 
-
 namespace core\base\model;
 
 
 use core\base\controller\Singleton;
 use core\base\exceptions\DbException;
 
-class BaseModel
+class BaseModel extends BaseModelMethods
 {
     // подключаю трейт
     use Singleton;
@@ -30,6 +29,13 @@ class BaseModel
     }
     //финальный метод(не изменяемый в дочерних классах) обработки запросов к БД принимает сам запрос $query, метод
     // запроса $crud по умолчанию read, для методов вставки $return_id
+    /**
+     * @param $query
+     * @param string $crud = r - SELECT / c - INSERT / u - UPDATE / d - DELETE
+     * @param bool $return_id
+     * @return array|bool|mixed
+     * @throws DbException
+     */
     final public function query($query, $crud = 'r', $return_id = false){
         //сохраняю запрос в переменную т.к. в db хранится объект подключения mysqli
         $result = $this->db->query($query);
@@ -87,17 +93,41 @@ class BaseModel
      * 'order' => ['fio', 'name']
      * 'order_direction' =? ['ASC', 'DESC']
      * 'limit' => '1'
+     * 'join' [
+        'table' => 'join_table',
+        'fields' => ['id as j_id', 'name as j_name'],
+        'type' => 'left',
+        'where' => ['name' => 'alex'],
+        'operand' => ['='],
+        'condition' => ['OR'],
+        'on' => ['id', 'parent_id'],
+         'group_condition' => 'AND'
+        ],
+        'join_table2' => [
+        'table' => 'join_table2',
+        'fields' => ['id as j2_id', 'name as j2_name'],
+        'type' => 'left',
+        'where' => ['name' => 'alex'],
+        'operand' => ['='],
+        'condition' => ['AND'],
+        'on' => [
+        'table' => 'teachers',
+        'fields' => ['id', 'parent_id']
+        ]
+        ],
      */
     // неизменяемый метод из вне по выборке данных из БД (SELECT)
     final public function get($table, $set = []){
 
-        $fields = $this->createFields($table, $set);
+        $fields = $this->createFields($set, $table);
 
-        $order = $this->rder($table, $set);
+        $order = $this->createOrder($set, $table);
 
-        $where = $this->createWhere($table, $set);
+        $where = $this->createWhere($set, $table);
 
-        $join_arr = $this->createJoin($table, $set);
+        if (!$where) $new_where = true;
+            else $new_where = false;
+        $join_arr = $this->createJoin($set, $table, $new_where);
 
         $fields .= $join_arr['fields'];
         $join = $join_arr['join'];
@@ -107,151 +137,96 @@ class BaseModel
 
 
         // если в $limit что то пришло то записываю, а иначе передаю пустую строку
-        $limit = $set['limit'] ? $set['limit'] : '';
+        $limit = $set['limit'] ? 'LIMIT ' . $set['limit'] : '';
 
         $query = "SELECT $fields FROM $table $join $where $order $limit";
 
         return $this->query($query);
 
     }
-    // метод создания выборки полей для запроса в БД
-    protected function createFields($table = false, $set){
-        // если в $set пришел массив и он не пуст, то записываю, если нет записываю символ выбрать всё ['*']
-        $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : ['*'];
-        // если в $table что то пришло то записываю и конкатенирую точку,
-        $table = $table ? $table . '.' : '';
 
-        $fields = '';
+    /**
+     * @param $table - таблица для вставки данных
+     * @param array $set - массив параметров:
+     * fields => [поле => значение]; если не указан, то обрабатывается $_POST[поле => значение]
+     * разрешена передача например NOW() в качестве Mysql функции обычной строкой
+     * files => [поле => значение]; можно подать массив вида [поле =>[массив значений]]
+     * except => ['исключение 1', 'исключение 2'] - исключает данные элементы массива из добавления в запрос
+     * return_id => true|false - возвращать или нет идентификатор вставленной записи
+     * @return mixed
+     */
+    final public  function add($table, $set = []){
+        // если $set['fields'] массив и он не пуст то его и запишем, а иначе запишем false
+        $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : $_POST;
+        // аналогично только с массивом 'files'
+        $set['files'] = (is_array($set['files']) && !empty($set['files'])) ? $set['files'] : false;
+       // если не $set['fields'] и не $set['files'] то завершаем работу срипта
+        if(!$set['fields'] && !$set['files']) return false;
+        // если есть значение в $set['return_id'] то записываю true а иначе записываю false
+        $set['return_id'] = $set['return_id'] ? true : false;
 
-        foreach ($set['fields'] as $field){
-            $fields .= $table . $field . ',';
+        $set['except'] = (is_array($set['except']) && !empty($set['except'])) ? $set['except'] : false;
+
+        $insert_arr = $this->createInsert($set['fields'], $set['files'], $set['except']);
+
+        if ($insert_arr){
+            $query = "INSERT INTO $table ({$insert_arr['fields']}) VALUES ({$insert_arr['values']})";
+            return $this->query($query, 'c', $set['return_id']);
         }
 
-        return $fields;
+        return false;
     }
-    //метод создания строки сортировки для запроса
-    protected function createOrder($table = false, $set){
-        // если в $table что то пришло то записываю и конкатенирую точку,
-        $table = $table ? $table . '.': '';
-        // записываю в переменную пустую строку
-        $order_by = '';
-        // если $set масив и он не пустой
-        if (is_array($set['order']) && !empty($set['order'])){
-            // если есть order_direction и он является массиво и он не пустой я его записываю, иначе записываю ['ASC']
-            $set['order_direction'] = (is_array($set['order_direction'])
-                && !empty($set['order_direction']))
-                    ? $set['order_direction'] : ['ASC'];
-            // по умолчанию записываю в переменную 'ORDER BY '
-            $order_by = 'ORDER BY ';
-            // ставлю счётчик 0
-            $direct_count = 0;
 
-            foreach ($set['order'] as $order){
-                // если существует $set['order_direction'] и его ячейка [$direct_count]
-                if($set['order_direction'][$direct_count]){
-                    // записываю в переменную в верхнем регистре значение
-                    $order_direction = strtoupper($set['order_direction'][$direct_count]);
-                    // и увеличиваю
-                    $direct_count++;
-                }else{ // если ничего не пришло записываю ['ASC']
-                    $order_direction = strtoupper($set['order_direction'][$direct_count - 1]);
+    final public function edit($table, $set = []){
+
+        // если $set['fields'] массив и он не пуст то его и запишем, а иначе запишем false
+        $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : $_POST;
+        // аналогично только с массивом 'files'
+        $set['files'] = (is_array($set['files']) && !empty($set['files'])) ? $set['files'] : false;
+        // если не $set['fields'] и не $set['files'] то завершаем работу срипта
+        if(!$set['fields'] && !$set['files']) return false;
+
+        $set['except'] = (is_array($set['except']) && !empty($set['except'])) ? $set['except'] : false;
+
+        if (!$set['all_rows']){
+
+            if ($set['where']){
+                $where = $this->createWhere($set);
+            }else{
+                $columns = $this->showColumns($table);
+
+                if (!$columns) return false;
+
+                if ($columns['id_row'] && $set['fields'][$columns['id_row']]){
+                    $where = 'WHERE ' . $columns['id_row'] . '=' . $set['fields'][$columns['id_row']];
+                    unset($set['fields'][$columns['id_row']]);
                 }
-
-                $order_by .= $table . $order . ' ' . $order_direction . ',';
             }
 
-            $order_by = rtrim($order_by, ',');
         }
 
-        return $order_by;
+        $update = $this->createUpdate($set['fields'], $set['files'], $set['except']);
 
+        $query = "UPDATE $table SET $update $where";
+
+        return $this->query($query, 'u');
     }
 
-    protected function createWhere($table = false, $set, $instruction = 'WHERE'){
+    final public function showColumns($table){
+        $query = "SHOW COLUMNS FROM $table";
 
-        // если в $table что то пришло то записываю и конкатенирую точку,
-        $table = $table ? $table . '.': '';
-        // записываю в переменную пустую строку
-        $where = '';
+        $res = $this->query($query);
 
-        if (is_array($set['where']) && !empty($set['where'])){
-            // если $set['operand'] массив и он не пуст то записываем тот опернд что пришел, иначе записываем знак
-            // равенства
-            $set['operand'] = (is_array($set['operand']) && !empty($set['operand'])) ? $set['operand'] : ['='];
-            $set['condition'] = (is_array($set['condition']) && !empty($set['condition'])) ? $set['condition'] : ['AND'];
-            // присваиваю в $where то что пришло в переменной $instruction по умолчанию 'WHERE'
-            $where = $instruction;
+        $columns = [];
 
-            $o_count = 0;//operand_count
-            $c_count = 0;//condition_count
+        if ($res){
 
-            foreach ($set['where'] as $key => $item) {
-                // добавляю пробел на каждой итерации цикла
-                $where .= ' ';
-                // если в $set что то есть то в $operand присваиваю что пришло и увеличиваю на 1
-                if ($set['operand'][$o_count]){
-                    $operand = $set['operand'][$o_count];
-                    $o_count++;
-                }else{// иначе ставлю предыдущее значение
-                    $operand = $set['operand'][$o_count -1];
-                }
-
-                if ($set['condition'][$c_count]){
-                    $condition = $set['condition'][$c_count];
-                    $c_count++;
-                }else{
-                    $condition = $set['condition'][$c_count -1];
-                }
-                // если в $operand содержится 'IN' или 'NOT IN'
-                if ($operand === 'IN' || $operand === 'NOT IN'){
-                    // и если $item является строкой и первая позиция $item это SELECT
-                    if(is_string($item) && strrpos($item, 'SELECT')){
-                        $in_str = $item; // то записываю в переменную значение $item
-                    }else{// иначе если пришел массив записываю массив
-                        if(is_array($item)) $temp_item = $item;
-                            else $temp_item = explode(',', $item);// разбираю строку по запятым и записываю в $temp_item
-
-                        $in_str = '';
-
-                        foreach ($temp_item as $v){
-                            $in_str .= "'" . trim($v) . "',";
-                        }
-                    }
-                    $where .= $table . $key . ' ' . $operand . ' (' .trim($in_str, ',') . ') ' . $condition;
-
-                }elseif (strpos($operand, 'LIKE') !== false){
-
-                    $like_template = explode( '%', $operand);
-
-                    foreach ($like_template as $lt_key => $it){
-                        if(!$it){
-                            if(!$lt_key){
-                                $item = '%' . $item;
-                            }else{
-                                $item .= '%';
-                            }
-                        }
-                    }
-
-                    $where .= $table . $key . ' LIKE ' . "'" . $item . "' $condition";
-
-                }else{
-
-                    if (strpos($item, 'SELECT') === 0){
-                        $where .= $table . $key . $operand . '(' . $item . ") $condition";
-                    }else{
-                        $where .= $table . $key . $operand . "'" . $item . "' $condition";
-                    }
-
-                }
-
+            foreach ($res as $row){
+                $columns[$row['Field']] = $row;
+                if ($row['Key'] === 'PRI') $columns['id_row'] = $row['Field'];
             }
 
-            $where = substr($where, 0, strrpos($where, $condition));
-
         }
-
-        return $where;
+        return $columns;
     }
-
 }

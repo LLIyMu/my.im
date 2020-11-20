@@ -22,3 +22,47 @@ Fault: 15-11-2020 20:08:00 - Ошибка в SQL запросе: SELECT teachers
 file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
 In line 39
 
+Fault: 18-11-2020 20:01:56 - Ошибка в SQL запросе: SELECT teachers.id,teachers.name FROM teachers  WHERE teachers.name IN ('Natalya') AND teachers.surname LIKE 'Sergeevna%' OR teachers.fio<>'Aleksey' OR teachers.car='Ferrari' OR teachers.color NOT IN ('red','blue','black')  ORDER BY teachers.fio DESC,teachers.name DESC 1 - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 39
+
+Fault: 19-11-2020 4:51:18 - Ошибка в SQL запросе: SELECT teachers.id,teachers.name FROM teachers  WHERE teachers.name IN ('Natalya') AND teachers.surname<>(SELECT name FROM students WHERE  id = 1)  ORDER BY teachers.fio DESC,teachers.name DESC 1 - 2006 MySQL server has gone away
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 39
+
+Fault: 19-11-2020 19:00:49 - Ошибка в SQL запросе: INSERT INTO teachers (name,gallery_img,img,content,gallery_img,img,) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg',) - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 19:05:09 - Ошибка в SQL запросе: INSERT INTO teachers (name,gallery_img,img,content,gallery_img,img) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg') - 1110 Column 'img' specified twice
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 19:18:00 - Ошибка в SQL запросе: INSERT INTO teachers (name,content) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg') - 1136 Column count doesn't match value count at row 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 19:25:56 - Ошибка в SQL запросе: INSERT INTO teachers (name,gallery_img,img,content,gallery_img,img) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg') - 1110 Column 'img' specified twice
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 19:43:00 - Ошибка в SQL запросе: INSERT INTO teachers (name,gallery_img,img,content,gallery_img,img) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg') - 2006 MySQL server has gone away
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 19:43:39 - Ошибка в SQL запросе: INSERT INTO teachers (name,gallery_img,img,content,gallery_img,img) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg') - 1110 Column 'img' specified twice
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 19:43:39 - Ошибка в SQL запросе: INSERT INTO teachers (name,gallery_img,img,content,gallery_img,img) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg') - 1110 Column 'img' specified twice
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 19:52:59 - Ошибка в SQL запросе: INSERT INTO teachers (name,gallery_img,img,content,gallery_img,img) VALUES ('Olga','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg','Hello','[\"red\'\'.jpg\",\"blue.jpg\",\"black.jpg\"]','main_img.jpg') - 1110 Column 'img' specified twice
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 19-11-2020 20:05:44 - Ошибка в SQL запросе: INSERT INTO teachers (content,gallery_img,img) VALUES ('Hello','[\"red-bull\'\'.jpg\",\"blue-water.jpg\",\"black-death.jpg\"]','main_img2.jpg') - 1364 Field 'name' doesn't have a default value
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+

@@ -1,0 +1,4 @@
+Fault: 19-11-2020 19:45:36 - Не верное имя файла для подключения - core/plugins/shop/ProductController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 35
+
