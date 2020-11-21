@@ -15,12 +15,16 @@ class IndexController extends BaseController
         $db = Model::instance();
         $table = 'teachers';
 
-        $files['gallery_img'] = ["red-bull''.jpg", 'blue-water.jpg', 'black-death.jpg'];
-        $files['img'] = 'main_img2.jpg';
+        $files = [];
 
-        $_POST['name'] = '4e4en';
+        $_POST['id'] = 3;
+        $_POST['name'] = 'Osho';
+        $_POST['gallery_img'] = "<p>Old Turist<p>";
 
-        $res = $db->showColumns($table);
-        exit('id =' . $res['id'] . ' Name = ' . $res['name']);
+
+        $res = $db->edit($table, [
+            'files' => $files
+        ]);
+            exit('id =' . $res['id'] . ' Name = ' . $res['name']);
+        }
     }
-}

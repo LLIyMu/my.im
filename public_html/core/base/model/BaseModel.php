@@ -187,28 +187,31 @@ class BaseModel extends BaseModelMethods
         if(!$set['fields'] && !$set['files']) return false;
 
         $set['except'] = (is_array($set['except']) && !empty($set['except'])) ? $set['except'] : false;
-
+        // если не пришел массив all_rows - он нужен для вставки во все поля (используется редко)
         if (!$set['all_rows']){
-
+            // если есть массив $set['where'] то сохраняю в переменную результат работы метода createWhere в котором есть все проверки для обработки массива $set
             if ($set['where']){
                 $where = $this->createWhere($set);
             }else{
+                // иначе записываю в переменную результат работы метода showColumns с
                 $columns = $this->showColumns($table);
-
+                // если ничего не пришло из метода, прекращаю работу скрипта
                 if (!$columns) return false;
-
+                // если массив $columns содержит ячейку с['id_row'] и в массиве $set['fields'] тоже есть такая ячейка[$columns['id_row']]
+                // то записываю в переменную $where их содержимое и конкатенирую всё для правильного запроса к БД
                 if ($columns['id_row'] && $set['fields'][$columns['id_row']]){
                     $where = 'WHERE ' . $columns['id_row'] . '=' . $set['fields'][$columns['id_row']];
+                    // разрегистрирую поле т.к. в нём содержится автоинкремент,СуБД сама обработает данные
                     unset($set['fields'][$columns['id_row']]);
                 }
             }
 
         }
-
+        // сохраняю в переменную результат работы метода createUpdate который на вох принимает поля['fields'], файлы['files'] и исключения['except'] из изменения
         $update = $this->createUpdate($set['fields'], $set['files'], $set['except']);
-
+        // создаю запрос к БД
         $query = "UPDATE $table SET $update $where";
-
+        // возвращаю результат работы метода query
         return $this->query($query, 'u');
     }
 

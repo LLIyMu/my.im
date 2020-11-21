@@ -7,6 +7,9 @@ namespace core\base\model;
 abstract class BaseModelMethods
 {
 
+    // массив функций для Mysql запроса
+    protected $sqlFunc = ['NOW()'];
+
     // метод создания выборки полей для запроса в БД
     protected function createFields($set, $table = false){
         // если в $set пришел массив и он не пуст, то записываю, если нет записываю символ выбрать всё ['*']
@@ -237,8 +240,6 @@ abstract class BaseModelMethods
         $insert_arr = [];
 
         if ($fields){
-            // массив функций для Mysql запроса
-            $sql_func = ['NOW()'];
 
             foreach ($fields as $row => $value){
                 // есть $except и массив $row - ряд и $except то переходим на следующую итерацию цикла
@@ -246,7 +247,7 @@ abstract class BaseModelMethods
                 // добавляю в $insert_arr и его ячейку ['fields'] поле $row
                 $insert_arr['fields'] .= $row . ',';
                 // если в массиве $sql_func есть значение $value
-                if (in_array($value, $sql_func)){
+                if (in_array($value, $this->sqlFunc)){
                     // добавляю в $insert_arr['values'] то что есть в $value
                     $insert_arr['values'] .= $value . ',';
                 }else{
@@ -274,9 +275,45 @@ abstract class BaseModelMethods
 
         foreach ($insert_arr as $key => $arr) $insert_arr[$key] = rtrim($arr, ',');
 
-
-
         return $insert_arr;
+
+    }
+
+    protected function createUpdate($fields, $files, $except){
+
+        $update = '';
+
+        if ($fields){
+
+            foreach($fields as $row => $value){
+                // если есть исключение то перехожу на следующую итерацию цикла
+                if ($except && in_array($row, $except)) continue;
+
+                $update .= $row . '=';
+                // если пришла функция то записываю её в запрос без обработки
+                if (in_array($value, $this->sqlFunc)){
+                    $update .= $value . ',';
+                }else{// иначе обрабатываю значение кавычками
+                    $update .= "'" .addslashes($value) . "',";
+                }
+            }
+
+        }
+        // если есть $files
+        if ($files){
+            // прохожу по нему форычем как поле -> значение
+            foreach ($files as $row => $file){
+                // конкатенирую к массиву полей имя файла
+                $update .= $row . '=';
+                // если $file это массив в $insert_arr записываю строку в Json формате
+                if (is_array($file)) $update .= "'" . addslashes(json_encode($file)) . "',";
+                // иначе добавляю простую строку
+                else $update .= "'" . addslashes($file) . "',";
+            }
+
+        }
+
+        return rtrim($update, ',');
 
     }
 
