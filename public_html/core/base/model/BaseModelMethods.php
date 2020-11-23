@@ -65,7 +65,7 @@ abstract class BaseModelMethods
         return $order_by;
 
     }
-    //метод создания з
+    //метод создания строки запроса WHERE
     protected function createWhere($set, $table = false, $instruction = 'WHERE'){
 
         // если в $table что то пришло то записываю и конкатенирую точку,
@@ -164,6 +164,7 @@ abstract class BaseModelMethods
         $fields = '';
         $join = '';
         $where = '';
+        $tables = '';
         // если пришел массив ['join']
         if ($set['join']){
             // записываю в $join_table таблицу для соединения
@@ -210,6 +211,7 @@ abstract class BaseModelMethods
                     // присваиваю в $join_table текущую таблицу $key что бы следующая итерация цикла могла работать с
                     // предыдущей
                     $join_table = $key;
+                    $tables .= ', ' . trim($join_table);
                     // если в $new_where что то есть т.е. это новая инструкция where
                     if ($new_where){
                         // если в $item['where'] что то содержится то в $new_where записываем false
@@ -231,7 +233,7 @@ abstract class BaseModelMethods
 
         }
         // возвращаю результат работы сохранённый в переменных с помощью compact()
-        return compact('fields', 'join', 'where');
+        return compact('fields', 'join', 'where', 'tables');
 
     }
 
@@ -293,6 +295,8 @@ abstract class BaseModelMethods
                 // если пришла функция то записываю её в запрос без обработки
                 if (in_array($value, $this->sqlFunc)){
                     $update .= $value . ',';
+                }elseif ($value === NULL){
+                    $update .= "NULL" . ',';
                 }else{// иначе обрабатываю значение кавычками
                     $update .= "'" .addslashes($value) . "',";
                 }

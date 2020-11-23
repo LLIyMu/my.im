@@ -6,25 +6,16 @@ namespace core\admin\controller;
 
 use core\base\controller\BaseController;
 use core\admin\model\Model;
+use core\base\settings\Settings;
 
 class IndexController extends BaseController
 {
 
-    protected function inputData(){
+    protected function inputData()
+    {
 
-        $db = Model::instance();
-        $table = 'teachers';
+        $redirect = PATH . Settings::get('routes')['admin']['alias'] . '/show';
+        $this->redirect($redirect);
 
-        $files = [];
-
-        $_POST['id'] = 3;
-        $_POST['name'] = 'Osho';
-        $_POST['gallery_img'] = "<p>Old Turist<p>";
-
-
-        $res = $db->edit($table, [
-            'files' => $files
-        ]);
-            exit('id =' . $res['id'] . ' Name = ' . $res['name']);
-        }
     }
+}

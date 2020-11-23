@@ -66,3 +66,27 @@ Fault: 19-11-2020 20:05:44 - Ошибка в SQL запросе: INSERT INTO tea
 file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
 In line 45
 
+Fault: 22-11-2020 20:02:54 - Ошибка в SQL запросе: INSERT INTO students (name,content) VALUES ('student - 0','content - 0') - 1054 Unknown column 'content' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 22-11-2020 20:03:33 - Ошибка в SQL запросе: INSERT INTO students (name,content) VALUES ('student - 0','content - 0') - 1364 Field 'id' doesn't have a default value
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 22-11-2020 20:14:37 - Ошибка в SQL запросе: UPDATE teachers SET name=,img= WHERE teachers.id='1'  - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'img= WHERE teachers.id='1'' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 23-11-2020 18:14:54 - Ошибка в SQL запросе: SHOW COLUMNS FROM  - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 23-11-2020 18:17:00 - Ошибка в SQL запросе: SHOW COLUMNS FROM  - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+
+Fault: 23-11-2020 18:17:22 - Ошибка в SQL запросе: SHOW COLUMNS FROM  - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 45
+

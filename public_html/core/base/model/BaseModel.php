@@ -93,36 +93,39 @@ class BaseModel extends BaseModelMethods
      * 'order' => ['fio', 'name']
      * 'order_direction' =? ['ASC', 'DESC']
      * 'limit' => '1'
-     * 'join' [
-        'table' => 'join_table',
-        'fields' => ['id as j_id', 'name as j_name'],
-        'type' => 'left',
-        'where' => ['name' => 'alex'],
-        'operand' => ['='],
-        'condition' => ['OR'],
-        'on' => ['id', 'parent_id'],
-         'group_condition' => 'AND'
-        ],
+         * 'join' [
+            'table' => 'join_table',
+            'fields' => ['id as j_id', 'name as j_name'],
+            'type' => 'left',
+            'where' => ['name' => 'alex'],
+            'operand' => ['='],
+            'condition' => ['OR'],
+            'on' => ['id', 'parent_id'],
+             'group_condition' => 'AND'
+            ],
         'join_table2' => [
-        'table' => 'join_table2',
-        'fields' => ['id as j2_id', 'name as j2_name'],
-        'type' => 'left',
-        'where' => ['name' => 'alex'],
-        'operand' => ['='],
-        'condition' => ['AND'],
-        'on' => [
-        'table' => 'teachers',
-        'fields' => ['id', 'parent_id']
-        ]
+            'table' => 'join_table2',
+            'fields' => ['id as j2_id', 'name as j2_name'],
+            'type' => 'left',
+            'where' => ['name' => 'alex'],
+            'operand' => ['='],
+            'condition' => ['AND'],
+            'on' => [
+            'table' => 'teachers',
+            'fields' => ['id', 'parent_id']
+            ]
         ],
      */
     // неизменяемый метод из вне по выборке данных из БД (SELECT)
     final public function get($table, $set = []){
-
+        // записываю в свойство поля с помощью метода createFields в который передаю $set массив параметров, и
+        // таблицу $table
         $fields = $this->createFields($set, $table);
-
+        // записываю метод сортировки в свойство $order с помощью метода createOrder в который передаю $set массив
+        // параметров, и таблицу $table
         $order = $this->createOrder($set, $table);
-
+        // записываю метод сортировки в свойство $order с помощью метода createOrder в который передаю $set массив
+        // параметров, и таблицу $table
         $where = $this->createWhere($set, $table);
 
         if (!$where) $new_where = true;
@@ -215,6 +218,82 @@ class BaseModel extends BaseModelMethods
         return $this->query($query, 'u');
     }
 
+
+    /**
+     * @param $table - таблицы базы данных
+     * @param array $set
+     * 'fields' => ['id', 'name']
+     * 'where' => ['fio' => 'bakieva', 'name' => 'Natalya', 'surname' => 'Bakieva']
+     * 'operand' => ['=', '<>']
+     * 'condition' => ['AND', 'OR']
+         * 'join' [
+            'table' => 'join_table',
+            'fields' => ['id as j_id', 'name as j_name'],
+            'type' => 'left',
+            'where' => ['name' => 'alex'],
+            'operand' => ['='],
+            'condition' => ['OR'],
+            'on' => ['id', 'parent_id'],
+            'group_condition' => 'AND'
+            ],
+     * 'join_table2' => [
+            'table' => 'join_table2',
+            'fields' => ['id as j2_id', 'name as j2_name'],
+            'type' => 'left',
+            'where' => ['name' => 'alex'],
+            'operand' => ['='],
+            'condition' => ['AND'],
+            'on' => [
+            'table' => 'teachers',
+            'fields' => ['id', 'parent_id']
+            ]
+    ],
+     */
+    // метод удаления полей из БД или связей полей таблиц по ключам
+    public function delete($table, $set){
+        // записываю полученую талицу
+        $table = trim($table);
+        // создаю строку запроса WHERE
+        $where = $this->createWhere($set, $table);
+        // записываю колноки для удаления или UPDATE
+        $columns = $this->showColumns($table);
+        // если колонки не пришли заканчиваю работу скрипта
+        if(!$columns) return false;
+        // если $set['fields'] это массив и он не пуст
+        if (is_array($set['fields']) && !empty($set['fields'])){
+            // если есть $columns['id_row']
+            if ($columns['id_row']){
+                // записываю в $key ключ $columns['id_row'] из массива $set['fields']
+                $key = array_search($columns['id_row'], $set['fields']);
+                // если $key строго не равен false разрегистрирую его что бы не удалить или не модифицировать первичный
+                // ключ
+                if ($key !== false) unset($set['fields'][$key]);
+            }
+            // задаю пустой массив
+            $fields =[];
+
+            foreach($set['fields'] as $field){
+                $fields[$field] = $columns[$field]['Default'];
+            }
+            // записываю поля для обновления
+            $update = $this->createUpdate($fields, false, false);
+            // создаю строку запроса
+            $query = "UPDATE $table SET $update $where";
+        }else{
+            // получаю join
+            $join_arr = $this->createJoin($set, $table);
+            // записываю в $join то что пришло в массив $join_arr и его ячейку ['join']
+            $join = $join_arr['join'];
+            // записываю таблицы которые нужно объеденить
+            $join_tables = $join_arr['tables'];
+            // создаю строку запроса
+            $query = 'DELETE ' . $table . $join_tables . ' FROM ' . $table . ' ' . $join . ' ' . $where;
+        }
+        // возвращаю запрос
+        return $this->query($query, 'u');
+
+    }
+    // служебный метод показа колонок
     final public function showColumns($table){
         $query = "SHOW COLUMNS FROM $table";
 
@@ -230,6 +309,7 @@ class BaseModel extends BaseModelMethods
             }
 
         }
+        // возвращаю полученные колонки
         return $columns;
     }
 }
