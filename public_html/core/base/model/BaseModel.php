@@ -3,17 +3,15 @@
 namespace core\base\model;
 
 
-use core\base\controller\Singleton;
 use core\base\exceptions\DbException;
 
-class BaseModel extends BaseModelMethods
+abstract class BaseModel extends BaseModelMethods
 {
-    // подключаю трейт
-    use Singleton;
+
     // объявляю свойство $db в нём будет хранится объект подключения mysqli
     protected $db;
-    //
-    private function __construct()
+    // метод подключения к базе данных
+    protected function connect()
     {
         // подключаюсь к БД
         $this->db = @new \mysqli(HOST, USER, PASS, DB_NAME);

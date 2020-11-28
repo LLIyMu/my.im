@@ -11,6 +11,12 @@ abstract class BaseController
 {
     // подключаю трейт что бы использовать во всех классах наследующих базовый класс
     use \core\base\controller\BaseMethods;
+
+    protected $header;
+    protected $content;
+    protected $footer;
+
+
     //переменная для отображения страниц-видов-шаблонов
     protected $page;
     //для хранения ошибок
@@ -23,6 +29,8 @@ abstract class BaseController
     protected $outputMethod;
     // свойство параметров
     protected $parameters;
+    // свойство шаблона
+    protected $template;
 
     protected $styles;
     protected $scripts;

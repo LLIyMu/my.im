@@ -24,7 +24,14 @@ trait Singleton
         if (self::$_instance instanceof self){
             return self::$_instance;
         }
+        // создаю объект класса Singleton
+        self::$_instance = new self;
+        // если есть метод connect() в объекте класса то вызываю его
+        if (method_exists(self::$_instance, 'connect')){
+            self::$_instance->connect();
+        }
+
         // если нет объекта, то создаем его и возвращаем свойсвто с объектом
-        return self::$_instance = new self;
+        return self::$_instance;
     }
 }

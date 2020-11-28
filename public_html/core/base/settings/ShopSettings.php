@@ -10,6 +10,7 @@ class ShopSettings
 {
 
     use Singleton;
+
     private $baseSettings;
 
     private $routes = [

@@ -43,13 +43,22 @@ class Settings
             'outputMethod' => 'outputData'// метод вывода данных
         ],
     ];
+    // свойство расширения приложения
+    private $expansion = 'core/admin/expansion/';
 
     private $defaultTable = 'teachers';
+
+    private $projectTables = [
+        'teachers' => ['name' => 'Учителя', 'img' => 'pages.png'],
+        'students' => ['name' => 'Ученики']
+    ];
 
     private $templateArr = [
         'text' => ['name', 'phone', 'address'],
         'textarea' => ['content', 'keywords']
     ];
+
+
     // метод get() обращается к методу instance() который содержит в себе ссылку на объект класса
     static public function get($property){
         return self::instance()->$property;
