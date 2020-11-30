@@ -45,9 +45,9 @@ class Settings
     ];
     // свойство расширения приложения
     private $expansion = 'core/admin/expansion/';
-
+    // таблица по умолчанию
     private $defaultTable = 'teachers';
-
+    //
     private $projectTables = [
         'teachers' => ['name' => 'Учителя', 'img' => 'pages.png'],
         'students' => ['name' => 'Ученики']
@@ -56,6 +56,26 @@ class Settings
     private $templateArr = [
         'text' => ['name', 'phone', 'address'],
         'textarea' => ['content', 'keywords']
+    ];
+
+    private $translate = [
+        'name' => ['Название', 'Не более 100 символов']
+    ];
+    // свойство радио-кнопки
+    private $radio = [
+      'visible' => ['Нет', 'Да', 'default' => 'Да']
+    ];
+    // свойтсво корневых элементов (категория - подкатегория)
+    private $rootItems = [
+        'name' => 'Корневая',
+        'tables' => ['articles']
+    ];
+
+    // блоки для сорттировки меню (разделитель блоков)
+    private $blockNeedle = [
+        'vg-rows' => [],
+        'vg-img' => ['id'],
+        'vg-content' => ['content']
     ];
 
 

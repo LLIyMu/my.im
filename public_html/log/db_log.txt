@@ -6,3 +6,25 @@ Fault: 27-11-2020 17:27:22 - Ошибка в SQL запросе: SHOW COLUMNS FR
 file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
 In line 43
 
+Fault: 29-11-2020 9:38:17 - Ошибка в SQL запросе: SELECT * FROM information_schema.KEY_COLUMN_USAGE WHERE 
+        TABLE_SCHEMA = im AND TABLE_NAME = articles CONSTRAINT_NAME <> 'PRIMERY' AND
+        REFERENCED_TABLE_NAME is not null - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CONSTRAINT_NAME <> 'PRIMERY' AND
+        REFERENCED_TABLE_NAME is not null' at line 2
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 29-11-2020 9:39:41 - Ошибка в SQL запросе: SELECT * FROM information_schema.KEY_COLUMN_USAGE WHERE 
+        TABLE_SCHEMA = 'im' AND TABLE_NAME = 'articles' CONSTRAINT_NAME <> 'PRIMERY' AND
+        REFERENCED_TABLE_NAME is not null - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CONSTRAINT_NAME <> 'PRIMERY' AND
+        REFERENCED_TABLE_NAME is not null' at line 2
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 30-11-2020 4:12:04 - Ошибка в SQL запросе: SELECT teachers.id as id,teachers.name,teachers.content,teachers.parent_id FROM teachers   ORDER BY teachers.parent_id ASC  - 1054 Unknown column 'teachers.content' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 30-11-2020 17:07:13 - Ошибка в SQL запросе: SELECT teachers.id as id,teachers.name,teachers.content,teachers.parent_id FROM teachers   ORDER BY teachers.parent_id ASC  - 1054 Unknown column 'teachers.content' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+

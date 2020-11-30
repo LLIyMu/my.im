@@ -10,27 +10,13 @@ class ShowController extends BaseAdmin
 
     protected function inputData(){
 
-        $this->execBase();
+        if (!$this->userId) $this->execBase();
 
         $this->createTableData();
 
         $this->createData(['fields' => 'content']);
 
         return $this->expansion(get_defined_vars());
-
-    }
-
-    protected function outputData(){
-        // в $args записываю 0 элемент массива который возвращается функцией func_get_arg
-        $args = func_get_arg(0);
-        // если есть $args то записываю его в $vars иначе записываю пустой массив []
-        $vars = $args ? $args : [];
-        // если не свойство template записываю в него константу ADMIN_TEMPLATE и конкатенирую к ней строку 'show'
-        if (!$this->template) $this->template = ADMIN_TEMPLATE . 'show';
-        // в свойство content записываю тот шаблон что вернул метод render
-        $this->content = $this->render($this->template, $vars);
-        // вызываю родительский метод outputData
-        return parent::outputData();
 
     }
     // метод создания данных для отображения и сортировки меню

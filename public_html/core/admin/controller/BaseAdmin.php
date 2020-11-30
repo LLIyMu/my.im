@@ -20,12 +20,17 @@ abstract class BaseAdmin extends BaseController
     protected $columns;
     // свойство данных
     protected $data;
+    // свойство данных о внешних ключах
+    protected $foreignData;
 
     protected $adminPath;
     // создаю свойство для отображения меню
     protected $menu;
     // свойство тайтла
     protected $title;
+
+    protected $translate;
+    protected $blocks = [];
 
     protected function inputData(){
         // инициализирую стили для админ панели
@@ -44,6 +49,16 @@ abstract class BaseAdmin extends BaseController
     }
 
     protected function outputData(){
+        if (!$this->content){
+            // в $args записываю 0 элемент массива который возвращается функцией func_get_arg
+            $args = func_get_arg(0);
+            // если есть $args то записываю его в $vars иначе записываю пустой массив []
+            $vars = $args ? $args : [];
+            // если не свойство template записываю в него константу ADMIN_TEMPLATE и конкатенирую к ней строку 'show'
+            //if (!$this->template) $this->template = ADMIN_TEMPLATE . 'show';
+            // в свойство content записываю тот шаблон что вернул метод render
+            $this->content = $this->render($this->template, $vars);
+        }
         // записываю в свойство хедер
         $this->header = $this->render(ADMIN_TEMPLATE . 'include/header');
         // записываю в свойство footer
@@ -64,13 +79,15 @@ abstract class BaseAdmin extends BaseController
         self::inputData();
     }
     // метод который определяет из какой таблицы подключать данные
-    protected function createTableData(){
+    protected function createTableData($settings = false){
         // если не свойство $this->table
         if (!$this->table){
             // если есть свойство параметров, записываю в $this->table ключ с 0 порядковым номером
             if($this->parameters) $this->table = array_keys($this->parameters)[0];
-                // иначе записываю таблицу по умолчанию
-                else $this->table = Settings::get('defaultTable');
+                else{// иначе записываю таблицу по умолчанию
+                    if (!$settings) $settings = Settings::instance();
+                    $this->table = $settings::get('defaultTable');
+                }
         }
         // записываю в свойство $columns колонки с помощью метода showColumns передавая таблицу из свойств
         $this->columns = $this->model->showColumns($this->table);
@@ -120,4 +137,76 @@ abstract class BaseAdmin extends BaseController
 
         return false;
     }
+    // метод создания выходных данных
+    protected function createOutputData($settings = false){
+        // если в $settings ничего не пришло то сохраняю в него настройки класса Settings
+        if (!$settings) $settings = Settings::instance();
+        // в $blocks записываю то что определено в классе Settings в свойстве blockNeedle
+        $blocks = $settings::get('blockNeedle');
+        // в translate записываю то что определено в классе Settings в свойстве translate
+        $this->translate = $settings::get('translate');
+        // если в $blocks ничего не пришло ИЛИ $blocks не является массивом
+        if (!$blocks || !is_array($blocks)){
+            // прохожусь циклом по колонкам таблицы из БД
+            foreach($this->columns as $name => $item){
+                //если в ключе содержится строка id_row пропускаю итерацию
+                if ($name === 'id_row') continue;
+                // если в свойство translate ничего не пришло то записываю в его 0 элемент значение поля $name
+                if (!$this->translate[$name]) $this->translate[$name][] = $name;
+                // в 0 элемент свойства blocks записываю все полученные $name
+                $this->blocks[0][] = $name;
+            }
+
+            return;
+        }
+        // определяю блок по дефолту, это будет тот блок который записан в свойстве первым т.е 0 елемент
+        $default = array_keys($blocks)[0];
+
+        foreach($this->columns as $name => $item) {
+            //если в ключе содержится строка id_row пропускаю итерацию
+            if ($name === 'id_row') continue;
+
+            $insert = false;
+
+            foreach ($blocks as $block => $value){
+
+                if (!array_key_exists($block, $this->blocks)) $this->blocks[$block] = [];
+
+                if (in_array($name, $value)){
+                    $this->blocks[$block][] = $name;
+                    $insert = true;
+                    break;
+                }
+            }
+
+            if (!$insert) $this->blocks[$default][] = $name;
+
+            if (!$this->translate[$name]) $this->translate[$name][] = $name;
+
+
+        }
+
+        return;
+
+    }
+    // метод получения свойств для радио кнопки
+    protected function createRadio($settings = false){
+        // если ничего не пришло в аргумент $settings записываю в $settings ссылку на класс Settings
+        if (!$settings) $settings = Settings::instance();
+        // получаю в $radio свойства 'radio'
+        $radio = $settings::get('radio');
+        // если есть $radio
+        if ($radio){
+            // прохожу циклом по текущим колонкам таблицы
+            foreach ($this->columns as $name => $item){
+                // если в $radio есть ячейка [$name]
+                if ($radio[$name]){
+                    // записываю в foreignData[$name] массив $radio[$name]
+                    $this->foreignData[$name] = $radio[$name];
+                }
+            }
+        }
+
+    }
+
 }

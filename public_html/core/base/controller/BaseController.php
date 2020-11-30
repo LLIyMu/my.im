@@ -34,6 +34,8 @@ abstract class BaseController
 
     protected $styles;
     protected $scripts;
+
+    protected $userId;
     // метод обрабатывающий входящие парматеры и передающий их методу request()
     public function route(){
         //сохраняю в переменную $controller имя класса с правильным слешем получаю из адресной строки
