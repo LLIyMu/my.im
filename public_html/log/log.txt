@@ -402,3 +402,7 @@ Fault: 30-11-2020 4:12:17 - Отсутствует шаблон - core/admin/vie
 file F:\OpenServer\domains\my.im\public_html\core\base\controller\BaseController.php
 In line 111
 
+Fault: 05-12-2020 8:42:46 - Class core\admin\controller\Show?name=Ivan&page=2Controller does not exist
+file F:\OpenServer\domains\my.im\public_html\core\base\controller\BaseController.php
+In line 58
+

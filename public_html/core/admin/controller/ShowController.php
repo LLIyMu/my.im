@@ -14,11 +14,12 @@ class ShowController extends BaseAdmin
 
         $this->createTableData();
 
-        $this->createData(['fields' => 'content']);
+        $this->createData();
 
         return $this->expansion(get_defined_vars());
 
     }
+
     // метод создания данных для отображения и сортировки меню
     protected function createData($arr = []){
         // свойство полей из БД

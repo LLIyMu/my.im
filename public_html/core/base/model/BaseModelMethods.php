@@ -14,8 +14,8 @@ abstract class BaseModelMethods
     protected function createFields($set, $table = false){
         // если в $set пришел массив и он не пуст, то записываю, если нет записываю символ выбрать всё ['*']
         $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : ['*'];
-        // если в $table что то пришло то записываю и конкатенирую точку,
-        $table = $table ? $table . '.' : '';
+        // если в $table что то пришло и не $set['no_concat'] то записываю и конкатенирую точку,
+        $table = ($table && !$set['no_concat']) ? $table . '.' : '';
 
         $fields = '';
 
@@ -27,8 +27,8 @@ abstract class BaseModelMethods
     }
     //метод создания строки сортировки для запроса
     protected function createOrder($set, $table = false){
-        // если в $table что то пришло то записываю и конкатенирую точку,
-        $table = $table ? $table . '.': '';
+        // если в $table что то пришло и не $set['no_concat'] то записываю и конкатенирую точку,
+        $table = ($table && !$set['no_concat']) ? $table . '.' : '';
         // записываю в переменную пустую строку
         $order_by = '';
         // если $set масив и он не пустой
@@ -68,10 +68,15 @@ abstract class BaseModelMethods
     //метод создания строки запроса WHERE
     protected function createWhere($set, $table = false, $instruction = 'WHERE'){
 
-        // если в $table что то пришло то записываю и конкатенирую точку,
-        $table = $table ? $table . '.': '';
+        // если в $table что то пришло и не $set['no_concat'] то записываю и конкатенирую точку,
+        $table = ($table && !$set['no_concat']) ? $table . '.' : '';
         // записываю в переменную пустую строку
         $where = '';
+        // если пришла строка $set['where']
+        if (is_string($set['where'])){
+            // возвращаю строку с обрезанными концевыми пробелами если они есть
+            return $instruction . ' ' . trim($set['where']);
+        }
 
         if (is_array($set['where']) && !empty($set['where'])){
             // если $set['operand'] массив и он не пуст то записываем тот опернд что пришел, иначе записываем знак
@@ -240,43 +245,107 @@ abstract class BaseModelMethods
     protected function createInsert($fields, $files, $except){
         // задаю массив
         $insert_arr = [];
+        // в ячейку fields записываю скобку, для корректного SQL запроса
+        $insert_arr['fields'] = '(';
+        // записываю в $array_type 0 ключ массива $fields
+        $array_type = array_keys($fields)[0];
 
-        if ($fields){
+        if (is_int($array_type)){
 
-            foreach ($fields as $row => $value){
-                // есть $except и массив $row - ряд и $except то переходим на следующую итерацию цикла
-                if ($except && in_array($row, $except)) continue;
-                // добавляю в $insert_arr и его ячейку ['fields'] поле $row
-                $insert_arr['fields'] .= $row . ',';
-                // если в массиве $sql_func есть значение $value
-                if (in_array($value, $this->sqlFunc)){
-                    // добавляю в $insert_arr['values'] то что есть в $value
-                    $insert_arr['values'] .= $value . ',';
-                }else{
-                    // в противном случае обрабатываю $value функцией addslashes() добавляя одинарные кавычки
-                    $insert_arr['values'] .= "'" . addslashes($value) . "',";
+            $check_fields = false; // флаг проверки полей
+            $count_fields = 0;  // флаг корректного количества
+
+            foreach ($fields as $i => $item){
+                // записываю в ячейку values открывающую скобку
+                $insert_arr['values'] .= '(';
+                // если не $count_fields, то записываю в него $fields и его $i елемент
+                if (!$count_fields) $count_fields = count($fields[$i]);
+
+                $j = 0;
+
+                foreach ($item as $row => $value){
+                    // если есть $except и в $row тоже есть $except, то перехожу на следующую итерацию цикла
+                    if ($except && in_array($row, $except)) continue;
+                    // если не $check_fields то конкатенирую к $insert_arr значение поля $row и так же присоединяю
+                    // запятую (получается строка типа - ('name' = 'Natalia', .....     )
+                    if (!$check_fields) $insert_arr['fields'] .= $row . ',';
+                    // если в $value присутствует $this->sqlFunc
+                    if (in_array($value, $this->sqlFunc)){
+                        // в $insert_arr и его ячейку ['values'] присоединяю $value и конкатенирую запятую
+                        $insert_arr['values'] .= $value . ',';
+                        //иначе если в $value пришла строка 'NULL' или NULL
+                    }elseif ($value == 'NULL' || $value === NULL){
+                        // то записываю в $insert_arr['values'] нал "NULL" и присоединяю запятую
+                        $insert_arr['values'] .= "NULL" . ',';
+                    }else{
+                        // иначе записываю кавычки добавляю слеши к $value и ставлю запятую
+                        $insert_arr['values'] .= "'" . addslashes($value) . "',";
+                    }
+                    // увеличиваю счетчик на 1
+                    $j++;
+                    // если счетчик $j строго равен $count_fields выхожу из цикла
+                    if ($j === $count_fields) break;
                 }
-
+                // если счётчик $j меньше $count_fields
+                if ($j < $count_fields){
+                    for (; $j < $count_fields; $j++){
+                        // записываю NULL на каждой итерации
+                        $insert_arr['values'] .= "NULL" . ',';
+                    }
+                }
+                // записываю в массив обрезанный результат убирая последнюю запятую, и конкатенирую закрывающую
+                // скобку и запятую
+                $insert_arr['values'] = rtrim($insert_arr['values'], ',') . '),';
+                // если не $check_fields т.е. все поля уже заполнеы, ставлю его в true, что бы больше не заполнялись
+                // поля $insert_arr['fields']
+                if (!$check_fields) $check_fields = true;
             }
-            // если есть $files
-            if ($files){
-
-                foreach ($files as $row => $file){
-
-                    // конкатенирую к массиву полей имя файла
+        }else{
+            // просваиваю в значение открывающую скобку
+            $insert_arr['values'] = '(';
+            // если пришел обычный массив для одиночной вставки
+            if ($fields){
+                foreach ($fields as $row => $value){
+                    // если есть $except и в $row тоже есть $except, то перехожу на следующую итерацию цикла
+                    if ($except && in_array($row, $except)) continue;
+                    // конкатенирую к $insert_arr значение поля $row и так же присоединя запятую (получается строка
+                    // типа - ('name' => 'Natalia', .....     )
                     $insert_arr['fields'] .= $row . ',';
-                    // если $file это массив в $insert_arr записываю строку в Json формате
-                    if (is_array($file)) $insert_arr['values'] .= "'" . addslashes(json_encode($file)) . "',";
-                    // иначе добавляю простую строку
-                    else $insert_arr['values'] .= "'" . addslashes($file) . "',";
+                    // если в $value присутствует $this->sqlFunc
+                    if (in_array($value, $this->sqlFunc)){
+                        // в $insert_arr и его ячейку ['values'] присоединяю $value и конкатенирую запятую
+                        $insert_arr['values'] .= $value . ',';
+                        //иначе если в $value пришла строка 'NULL' или NULL
+                    }elseif ($value == 'NULL' || $value === NULL){
+                        // то записываю в $insert_arr['values'] нал "NULL" и присоединяю запятую
+                        $insert_arr['values'] .= "NULL" . ',';
+                    }else{
+                        // иначе записываю кавычки добавляю слеши к $value и ставлю запятую
+                        $insert_arr['values'] .= "'" . addslashes($value) . "',";
+                    }
                 }
-
             }
-
+            // если пришли данные файлов для вставки
+            if ($files){
+                // прохожу в форыче как ключ $row - поле и его значение $file
+                foreach ($files as $row => $file){
+                    // добавляю к $insert_arr['fields'] строку $row, и конкатенирую к ней запятую
+                    $insert_arr['fields'] .= $row . ',';
+                    // если $file это массив, т.е. json строка, та записываю в $insert_arr['values'] кодированный
+                    // файл экранированный слешами с помощью функции addslashes() и добавляю кавычку и запятую в конце
+                    if (is_array($file)) $insert_arr['values'] .= "'" . addslashes(json_encode($file)) . "',";
+                        // иначе просто экранирую строку с помощью слешей и добавляю кавычку и запятую в конце
+                        else $insert_arr['values'] .= "'" . addslashes($file) . "',";
+                }
+            }
+            // записываю в $insert_arr['values'] строку обрезанную по последней запятой и добавляю закрывающую скобку
+            $insert_arr['values'] = rtrim($insert_arr['values'], ',') . ')';
         }
-
-        foreach ($insert_arr as $key => $arr) $insert_arr[$key] = rtrim($arr, ',');
-
+        // записываю в $insert_arr['fields'] строку обрезанную по последней запятой и добавляю закрывающую скобку
+        $insert_arr['fields'] = rtrim($insert_arr['fields'], ',') . ')';
+        // записываю в $insert_arr['values'] строку обрезанную по последней запятой
+        $insert_arr['values'] = rtrim($insert_arr['values'], ',');
+        // возвращаю массив
         return $insert_arr;
 
     }

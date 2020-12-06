@@ -16,23 +16,28 @@ class RouteController extends BaseController
     // магический метод __construct выполняется каждый раз при создании объекта класса
     private function __construct()
     {
-        $address_arr = $_SERVER['REQUEST_URI'];
+        $address_str = $_SERVER['REQUEST_URI'];
+        // если в $_SERVER['QUERY_STRING'] что то есть
+        if ($_SERVER['QUERY_STRING']){
+            // обрезаю $_GET параметры в $address_str для нормального формирования контроллера
+            $address_str = substr($address_str, 0, strpos($address_str, $_SERVER['QUERY_STRING']) - 1);
+        }
         // сохранил в переменную $path обрезанную строку в которой содержиться имя выполнения скрипта
         $path = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], 'index.php'));
         // если $path равна константе PATH
         if ($path === PATH) {
             //делаю проверку на то что это не корневой вызов
             //конструкция strrpos возвращает позицию последнего вхождения подстроки в строке
-            if (strrpos($address_arr, '/') === strlen($address_arr) - 1 &&
-                strrpos($address_arr, '/') !== strlen(PATH) -1) {
-                $this->redirect(rtrim($address_arr, '/'), 301);}
+            if (strrpos($address_str, '/') === strlen($address_str) - 1 &&
+                strrpos($address_str, '/') !== strlen(PATH) -1) {
+                $this->redirect(rtrim($address_str, '/'), 301);}
             // сохраняю маршруты в свойство $routes с помощью метода get класса Settings
             $this->routes = Settings::get('routes');
             //если маршруты не были получены выбрасываю сообщение
             if (!$this->routes) throw new RouteException('Отсутствуют маршруты в базовых настройках', 1);
             //сохраняю в переменную $url, получаю массив с разделителем '/', обрезаю адресную строку с помощью
             // конструкции substr где первый элемент это PATH т.е. начиная с '/' возвращаю путь в $url
-            $url = explode('/', substr($address_arr, strlen(PATH)));
+            $url = explode('/', substr($address_str, strlen(PATH)));
             //проверяю адресную строку, если в $url что то есть и оно соответствует алиасу админ
             // подключаемся к админ панели, и разбираем адресную строку относительно админ панели
             if ($url[0] && $url[0] === $this->routes['admin']['alias']) {

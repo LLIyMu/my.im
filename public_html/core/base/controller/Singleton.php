@@ -30,7 +30,6 @@ trait Singleton
         if (method_exists(self::$_instance, 'connect')){
             self::$_instance->connect();
         }
-
         // если нет объекта, то создаем его и возвращаем свойсвто с объектом
         return self::$_instance;
     }

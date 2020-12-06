@@ -17,9 +17,33 @@ class AddController extends BaseAdmin
 
         $this->createForeignData();
 
+        $this->createMenuPosition();
+
         $this->createRadio();
 
         $this->createOutputData();
+
+        $this->manyAdd();
+
+        exit;
+    }
+    // метод множественной вставки в БД одним запросом
+    protected function manyAdd(){
+
+        //$fields = ['name' => 'Kamila'];
+        $fields = [
+            'name' => 'Sveta5!@#', 'menu_position' => 2
+        ];
+        $files = [
+            //'img' => '111.jpg',
+            'img' => ['5.jpg', '6.jpg']
+        ];
+
+        $this->model->add('teachers', [
+            'fields' => $fields,
+            'files' => $files
+        ]);
+
     }
     // метод формирования внешних ключей для метода createForeignData() принимает $arr массивб и
     protected function createForeignProperty($arr, $rootItems){
@@ -113,6 +137,77 @@ class AddController extends BaseAdmin
         }
 
          return;
+
+    }
+    // метод создания сортировки блоков меню относительно родительской таблицы БД
+    protected function createMenuPosition($settings = false){
+        // если в текущих колонках таблицы есть ячейка ['menu_position']
+        if ($this->columns['menu_position']){
+            // если не $settings то сохраняю в переменную $settings ссылку на объект класса Settings
+            if (!$settings) $settings = Settings::instance();
+            // в $rootItems получаю свойство rootItems, которое лежит в классе Settings
+            $rootItems = Settings::get('rootItems');
+            // если в свойстве columns есть ячейка массива ['parent_id']
+            if ($this->columns['parent_id']){
+                // если в массиве $rootItems['tables'] есть таблица $this->table
+                if (in_array($this->table, $rootItems['tables'])){
+                    // то в $where записываю строку для запроса, где parent_id, проверяется, равен ли он NULL или 0
+                    $where = 'parent_id IS NULL OR parent_id = 0';
+                }else{
+                    // иначе записываю в $parent колонки с внешними ключами, передаю второй параметр $key => 'parent_id'
+                    // когда метод showForeignKeys получает второй аргумент он вставляет его в запрос к БД который
+                    // уточняет какое поле мы ищем
+                    $parent = $this->model->showForeignKeys($this->table, 'parent_id')[0];
+                    // если в $parent что то пришло
+                    if ($parent){
+
+                        if ($this->table === $parent['REFERENCED_TABLE_NAME']){
+                            $where = 'parent_id IS NULL OR parent_id = 0';
+                        }else{
+                            // записываю в переменную колонки которые пришли из родительской (parent) таблицы
+                            $columns = $this->model->showColumns($parent['REFERENCED_TABLE_NAME']);
+                            // если есть $columns и его ячейка ['parent_id'] то записываю в свойство выборки $order[] =
+                            // 'parent_id'
+                            if ($columns['parent_id']) $order[] = 'parent_id';
+                            // иначе записываю $columns['id_row']
+                            else $order[] = $parent['REFERENCED_COLUMN_NAME'];
+                            // в $id записываю [0] элемент таблицы $parent['REFERENCED_TABLE_NAME'] т.е. возвращаю его
+                            // значение в переменную
+                            $id = $this->model->get($parent['REFERENCED_TABLE_NAME'],[
+                                'fields' => [$parent['REFERENCED_COLUMN_NAME']],
+                                'order' => $order,
+                                'limit' => 1
+                            ])[0][$parent['REFERENCED_COLUMN_NAME']];
+
+                            if ($id) $where = ['parent_id' => $id];
+                        }
+
+
+                    }else{
+                        //в $where записываю строку для запроса, где parent_id, проверяется, равен ли он NULL или 0
+                        $where = 'parent_id IS NULL OR parent_id = 0';
+
+                    }
+
+                }
+
+            }
+            // записываю в $menu_pos считая все поля с помощью COUNT(*) получая нулевой элемент текущей таблицы + 1
+            // элемент т.к. это метод add()
+            $menu_pos = $this->model->get($this->table, [
+                'fields' => ['COUNT(*) as count'],// посчитать всё COUNT(*) и присвоить  count
+                'where' =>  $where, // записываю то что пришло в $where или пустоту если ничего не пришло
+                'no_concat' => true // ставлю флаг 'no_concat' в true
+            ])[0]['count'] + 1;
+
+            for ($i = 1; $i <= $menu_pos; $i++){
+                $this->foreignData['menu_position'][$i - 1]['id'] = $i;
+                $this->foreignData['menu_position'][$i - 1]['name'] = $i;
+            }
+        }
+
+
+        return;
 
     }
 
