@@ -28,9 +28,16 @@ abstract class BaseAdmin extends BaseController
     protected $menu;
     // свойство тайтла
     protected $title;
+    // свойство служебных сообщений
+    protected $messages;
 
     protected $translate;
     protected $blocks = [];
+    // массив шаблонов
+    protected $templateArr;
+    // шаблоны форм
+    protected $formTemplates;
+    protected $noDelete;
 
     protected function inputData(){
         // инициализирую стили для админ панели
@@ -44,6 +51,10 @@ abstract class BaseAdmin extends BaseController
         if (!$this->menu) $this->menu = Settings::get('projectTables');
 
         if (!$this->adminPath) $this->adminPath = PATH . Settings::get('routes')['admin']['alias'] . '/';
+
+        if (!$this->templateArr) $this->templateArr = Settings::get('templateArr');
+        if (!$this->formTemplates) $this->formTemplates = Settings::get('formTemplates');
+        if (!$this->messages) $this->messages = $_SERVER['DOCUMENT_ROOT'] . PATH . Settings::get('messages') . 'informationMessages.php';
         // вызываю заголовки (headers) для браузера что бы он не кешировал данные а подгружал их с сервера
         $this->sendNoCacheHeaders();
     }
@@ -206,6 +217,123 @@ abstract class BaseAdmin extends BaseController
                 }
             }
         }
+
+    }
+    // метод проверки данных которые пришли постом ($_POST)
+    protected function checkPost($settings = false){
+        // если данные пришли POST-ом
+        if ($this->isPost()){
+            // вызываю метод очистки данных полей формы, передавая $settings
+            $this->clearPostFields($settings);
+            // в свойство table записываю ту таблицу которая содержиться в $_POST['table'], при этом обрезая пробелы
+            // с помощью метода clearStr
+            $this->table = $this->clearStr($_POST['table']);
+            // разрегестрирую $_POST['table']
+            unset($_POST['table']);
+            // если в свойстве table что то содержится
+            if ($this->table){
+                // вызываю метод createTableData который формирует данные для подключения из текущей таблицы
+                $this->createTableData($settings);
+                // вызываю метод изменения данных таблицы
+                $this->editData();
+            }
+
+        }
+
+    }
+
+    protected function addSessionData($arr = []){
+
+        if (!$arr) $arr = $_POST;
+
+        foreach($arr as $key => $item){
+            $_SESSION['res'][$key] = $item;
+        }
+
+        $this->redirect();
+    }
+
+    protected function emptyFields($item, $answer, $arr = []){
+
+        if (empty($item)){
+            $_SESSION['res']['answer'] = '<div class="error">' . $this->messages['empty'] . ' ' . $answer . '</div>';
+            $this->addSessionData($arr);
+        }
+
+    }
+
+    // метод очистки данных пришедших из форм методом $_POST
+    protected function clearPostFields($settings, &$arr = []){
+        // если не $arr то записываю в $arr ссылку на $_POST
+        if (!$arr) $arr = &$_POST;
+        // если не $settings то записываю в $settings объект класса Settings
+        if (!$settings) $settings = Settings::instance();
+        // в $id записываю - если есть $_POST и в его ячейке [$this->columns['id_row']] есть запись, то его и
+        // записываю, а иначе записываю false
+        $id = $_POST[$this->columns['id_row']] ?: false;
+        // в переменную $validate получаю настройки из Settings которые записаны в свойстве (validation)
+        $validate = $settings::get('validation');
+        // если не translate, то получаю его из класса $settings
+        if (!$this->translate) $this->translate = $settings::get('translate');
+        // прохожу по $arr как ключ - значение
+        foreach ($arr as $key => $item){
+            // если $item это массив
+            if (is_array($item)){
+                // то делаю рекурсивный вызов метода передавая $settings и то что есть в $item
+                $this->clearPostFields($settings,$item);
+            }else{
+                // еслт $item это число
+                if (is_numeric($item)){
+                    // записываю в $arr и его ячейку [$key] приведенное к нормальнму типу чило $this->clearNum($item)
+                    $arr[$key] = $this->clearNum($item);
+                }
+                // если в свойство $validate что то пришло
+                if ($validate){
+                    // если в свойстве $validate содержится ключ [$key]
+                    if ($validate[$key]){
+                        // если в свойстве translate есть значение ключа [$key]
+                        if ($this->translate[$key]){
+                            // записываю в ответ $this->translate[$key][0]
+                            $answer = $this->translate[$key][0];
+                        }else{
+                            // иначе просто записываю что содержится в $key
+                            $answer = $key;
+                        }
+                        // если в $validate[$key] есть ['crypt']
+                        if ($validate[$key]['crypt']){
+                            // и если получен $id
+                            if ($id){
+                                // если значение $item пустое
+                                if (empty($item)){
+                                    // разрегистрирую $arr[$key]
+                                    unset($arr[$key]);
+                                    // перехожу на следущую итерацию цикла
+                                    continue;
+                                }
+                                // шифрую данные
+                                $arr[$key] = md5($item);
+
+                            }
+                        }
+                        // если есть $validate[$key]['empty'] вызываю метод emptyFields и передаю ему на вход ($item, $answer, $arr)
+                        if ($validate[$key]['empty']) $this->emptyFields($item, $answer, $arr);
+                        // если есть $validate[$key]['trim'] записываю в $arr[$key] обрезанное с помощью trim($item)
+                        if ($validate[$key]['trim']) $arr[$key] = trim($item);
+                        // если есть $validate[$key]['int'] записываю в $arr[$key] приведенное к нормальному
+                        // типу число clearNum($item)
+                        if ($validate[$key]['int']) $arr[$key] = $this->clearNum($item);
+                        // $validate[$key]['count'] вызываю метод подсчета символов countChar, передавая ($item,
+                        // $validate[$key]['count'], $answer, $arr)
+                        if ($validate[$key]['count']) $this->countChar($item, $validate[$key]['count'], $answer, $arr);
+
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    protected function editData(){
 
     }
 

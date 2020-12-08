@@ -45,17 +45,25 @@ class Settings
     ];
     // свойство расширения приложения
     private $expansion = 'core/admin/expansion/';
+    // путь хранения служебных сообщений
+    private $messages = 'core/base/messages/';
     // таблица по умолчанию
     private $defaultTable = 'teachers';
-    //
+    // шаблоны формы
+    private $formTemplates = PATH . 'core/admin/view/include/form_templates/';
+
     private $projectTables = [
         'teachers' => ['name' => 'Учителя', 'img' => 'pages.png'],
         'students' => ['name' => 'Ученики']
     ];
-
+    // массив шаблонов
     private $templateArr = [
-        'text' => ['name', 'phone', 'address'],
-        'textarea' => ['content', 'keywords']
+        'text' => ['name'],
+        'textarea' => ['keywords'],
+        'radio' => ['visible'],
+        'select' => ['menu_position', 'parent_id'],
+        'img' => ['img'],
+        'gallery_img' => ['gallery_img']
     ];
 
     private $translate = [
@@ -68,14 +76,23 @@ class Settings
     // свойтсво корневых элементов (категория - подкатегория)
     private $rootItems = [
         'name' => 'Корневая',
-        'tables' => ['teachers', 'articles']
+        'tables' => ['articles']
     ];
 
     // блоки для сорттировки меню (разделитель блоков)
     private $blockNeedle = [
         'vg-rows' => [],
-        'vg-img' => ['id'],
+        'vg-img' => ['img'],
         'vg-content' => ['content']
+    ];
+    // свойство валидации, добавляю сюда то что нужно будет отвалидировать перед добавлением в БД
+    private $validation = [
+        'name' => ['empty' => true, 'trim' => true],
+        'price' => ['int' => true],
+        'login' => ['empty' => true, 'trim' => true],
+        'password' => ['crypt' => true, 'empty' => true],
+        'keywords' => ['count' => 70, 'trim' => true],
+        'description' => ['count' => 160, 'trim' => true]
     ];
 
 

@@ -188,12 +188,14 @@ abstract class BaseModelMethods
                     $join_fields = [];// создаю пустой массив
 
                     switch (2) { // если в массиве есть 2 элемента вида ['on']['fields']
-                        // если в поле ['on']['fields'] есть 2 элемента массива
-                        case count($item['on']['fields']):
+                        // если $item['on']['fields'] является массивом и если в поле ['on']['fields'] есть 2 элемента
+                        // массива
+                        case (is_array($item['on']['fields']) && count($item['on']['fields'])):
                             $join_fields = $item['on']['fields']; // записываю эти поля
                             break;
-                        // если поля для присоединения описаны в ячейке 'on'
-                        case count($item['on']): // посчитаем их, если их 2 то записываем их в $join_fields
+                        // если $item['on'] является массивом и если поля для присоединения описаны в ячейке 'on'
+                        case (is_array($item['on']) && count($item['on'])): // посчитаем их, если их 2 то записываем их
+                            // в $join_fields
                             $join_fields = $item['on'];
                             break;
                         default:
@@ -349,7 +351,7 @@ abstract class BaseModelMethods
         return $insert_arr;
 
     }
-
+    // метод обновления данных в БД
     protected function createUpdate($fields, $files, $except){
 
         $update = '';

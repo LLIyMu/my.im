@@ -8,10 +8,15 @@ use core\base\settings\Settings;
 
 class AddController extends BaseAdmin
 {
+    // свойство для определения пути к шаблону
+    protected $action = 'add';
 
     protected function inputData()
     {
+        // вызываю родительский метод, который инициализирует и запускает все нужные методы
         if (!$this->userId) $this->execBase();
+
+        $this->checkPost();
 
         $this->createTableData();
 
@@ -22,27 +27,6 @@ class AddController extends BaseAdmin
         $this->createRadio();
 
         $this->createOutputData();
-
-        $this->manyAdd();
-
-        exit;
-    }
-    // метод множественной вставки в БД одним запросом
-    protected function manyAdd(){
-
-        //$fields = ['name' => 'Kamila'];
-        $fields = [
-            'name' => 'Sveta5!@#', 'menu_position' => 2
-        ];
-        $files = [
-            //'img' => '111.jpg',
-            'img' => ['5.jpg', '6.jpg']
-        ];
-
-        $this->model->add('teachers', [
-            'fields' => $fields,
-            'files' => $files
-        ]);
 
     }
     // метод формирования внешних ключей для метода createForeignData() принимает $arr массивб и

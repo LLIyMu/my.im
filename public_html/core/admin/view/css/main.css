@@ -88,6 +88,7 @@ label.vg-element {
 .vg-element {
     display: flex;
     padding: 0.35%;
+
 }
 
 .vg-full {
@@ -241,6 +242,10 @@ label.vg-element {
 .vg-header {
     font-size: 1.2vw;
 }
+.vg-subheader {
+    font-size: 1vw;
+    color: lightslategray;
+}
 
 @media (max-width: 1200px) {
     .vg-header {
@@ -283,6 +288,7 @@ label.vg-element {
 
 .vg-box-shadow {
     box-shadow: 0vw 2px 1px rgba(176, 190, 197, 0.5);
+    background: #fff;
 }
 
 #hideButton,
