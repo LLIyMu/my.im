@@ -28,6 +28,10 @@ abstract class BaseAdmin extends BaseController
     protected $menu;
     // свойство тайтла
     protected $title;
+
+    protected $fileArray;
+
+    protected $alias;
     // свойство служебных сообщений
     protected $messages;
 
@@ -38,6 +42,7 @@ abstract class BaseAdmin extends BaseController
     // шаблоны форм
     protected $formTemplates;
     protected $noDelete;
+
 
     protected function inputData(){
         // инициализирую стили для админ панели
@@ -54,7 +59,8 @@ abstract class BaseAdmin extends BaseController
 
         if (!$this->templateArr) $this->templateArr = Settings::get('templateArr');
         if (!$this->formTemplates) $this->formTemplates = Settings::get('formTemplates');
-        if (!$this->messages) $this->messages = $_SERVER['DOCUMENT_ROOT'] . PATH . Settings::get('messages') . 'informationMessages.php';
+        if (!$this->messages) $this->messages = include $_SERVER['DOCUMENT_ROOT'] . PATH . Settings::get('messages') .
+        'informationMessages.php';
         // вызываю заголовки (headers) для браузера что бы он не кешировал данные а подгружал их с сервера
         $this->sendNoCacheHeaders();
     }
@@ -241,28 +247,47 @@ abstract class BaseAdmin extends BaseController
         }
 
     }
-
+    // метод записи данных в сессию
     protected function addSessionData($arr = []){
-
+        // если не $arr то записываю в $arr массив $_POST
         if (!$arr) $arr = $_POST;
 
         foreach($arr as $key => $item){
+            // записываю в $_SESSION['res'][$key] значение $item
             $_SESSION['res'][$key] = $item;
         }
-
+        // делаю редирект
         $this->redirect();
     }
 
-    protected function emptyFields($item, $answer, $arr = []){
-
-        if (empty($item)){
-            $_SESSION['res']['answer'] = '<div class="error">' . $this->messages['empty'] . ' ' . $answer . '</div>';
+    protected function countChar($str, $counter, $answer, $arr){
+        // если количество символов в строке больше чем установлено в свойстве $validation
+        if (mb_strlen($str) > $counter){
+            // формирую сообщение
+            $str_res = mb_str_replace('$1', $answer, $this->messages['count']);
+            $str_res = mb_str_replace('$2', $counter, $str_res);
+            // записываю сообщение в сессию
+            $_SESSION['res']['answer'] = '<div class="error">' . $str_res . '</div>';
+            // передаю массив данных в сессию
             $this->addSessionData($arr);
         }
 
     }
 
-    // метод очистки данных пришедших из форм методом $_POST
+    // метод добавления сообщения если поля для заполнения пустые
+    protected function emptyFields($str, $answer, $arr = []){
+        // если строка $str пустая
+        if (empty($str)){
+            // записываю в сессию сообщение из ячейки $this->messages['empty'] и добавляем $answer
+            $_SESSION['res']['answer'] = '<div class="error">' . $this->messages['empty'] . ' ' . $answer . '</div>';
+            // вызываю метод который записывает данные в $_POST из переданного массива $arr, нужен для того что бы
+            // данные которые ввели в поля не затерлись
+            $this->addSessionData($arr);
+        }
+
+    }
+
+    // метод очистки данных пришедших из форм методом $_POST до того как их добавить в БД
     protected function clearPostFields($settings, &$arr = []){
         // если не $arr то записываю в $arr ссылку на $_POST
         if (!$arr) $arr = &$_POST;
@@ -282,7 +307,7 @@ abstract class BaseAdmin extends BaseController
                 // то делаю рекурсивный вызов метода передавая $settings и то что есть в $item
                 $this->clearPostFields($settings,$item);
             }else{
-                // еслт $item это число
+                // еслт $item состоит из чисел
                 if (is_numeric($item)){
                     // записываю в $arr и его ячейку [$key] приведенное к нормальнму типу чило $this->clearNum($item)
                     $arr[$key] = $this->clearNum($item);
@@ -310,7 +335,7 @@ abstract class BaseAdmin extends BaseController
                                     // перехожу на следущую итерацию цикла
                                     continue;
                                 }
-                                // шифрую данные
+                                // хэширую данные
                                 $arr[$key] = md5($item);
 
                             }
@@ -333,7 +358,202 @@ abstract class BaseAdmin extends BaseController
         return true;
     }
 
-    protected function editData(){
+    protected function editData($returnId = false) {
+
+        $id = false;
+        $method = 'add';
+        // проверяю пришел ли вместе с POST первичний ключ
+        if ($_POST[$this->columns['id_row']]){
+            // записываю в $id значение по условию - если columns['id_row'] это число то записываю приведенное к
+            // нормальному числу значение clearNum($_POST[$this->columns['id_row']] иначе записываю $this->clearStr($_POST[$this->columns['id_row']]
+            $id = is_numeric($_POST[$this->columns['id_row']]) ?
+                $this->clearNum($_POST[$this->columns['id_row']]) :
+                $this->clearStr($_POST[$this->columns['id_row']]);
+            // если в $id что то пришло
+            if ($id){
+                // записываю в оператор $where [$this->columns['id_row'] => $id]
+                $where = [$this->columns['id_row'] => $id];
+                // а в метод записываю $method = 'edit'
+                $method = 'edit';
+            }
+        }
+        // прохожу форычем по текущим колонкам таблицы $this->columns
+        foreach ($this->columns as $key => $item){
+            // если $key равен строке 'id_row' перехожу на следующую итерацию
+            if ($key === 'id_row') continue;
+            // если поле 'Type' равно 'date' или 'datetime'
+            if ($item['Type'] === 'date' || $item['Type'] === 'datetime'){
+                // и если в $_POST[$key] ничего нет то записываю в него строку 'NOW()', это сокращённый синтаксис
+                // конструкции if else
+                !$_POST[$key] && $_POST[$key] = 'NOW()';
+            }
+        }
+        // вызываю метод создания файла
+        $this->createFile();
+        // вызываю метод создания ЧПУ
+        $this->createAlias($id);
+
+        $this->updateMenuPosition();
+        // в $except записываю результат метода который исключает поля для добавления в БД
+        $except = $this->checkExceptFields();
+        // сохраняю в переменную метод 'add' или 'edit'
+        $res_id = $this->model->$method($this->table, [
+            'files' => $this->fileArray,
+            'where' => $where,
+            'return_id' => true,
+            'except' => $except
+        ]);
+        // если не $id и $method === 'add' т.е. если добавляли данные
+        if (!$id && $method === 'add'){
+            // записываю в $_POST[$this->columns['id_row']] то что есть в $res_id
+            $_POST[$this->columns['id_row']] = $res_id;
+            // формирую сообщение о успешном добавлении
+            $answerSuccess = $this->messages['addSuccess'];
+            // формирую сообщение о ошибке в добавлении данных
+            $answerFail = $this->messages['addFail'];
+        }else{
+            // формирую сообщение о успешном изменении данных
+            $answerSuccess = $this->messages['editSuccess'];
+            // формирую сообщение о ошибке в изменении данных
+            $answerFail = $this->messages['editFail'];
+        }
+        // запускаю метод расширения функционала системы, передаю все объявленные переменные в этом методе
+        $this->expansion(get_defined_vars());
+        // записываю в переменную метод проверки алиаса передавая ему идентификатор
+        $result = $this->checkAlias($_POST[$this->columns['id_row']]);
+        // если в $res_id что то есть
+        if ($res_id){
+            // записываю сообщение об успехе заполнения БД данными из формы
+            $_SESSION['res']['answer'] = '<div class="success">' . $answerSuccess . '</div>';
+            // если не нужно возвращать $returnId то делаю редирект
+            if (!$returnId) $this->redirect();
+            // возвращаю $_POST[$this->columns['id_row']]
+            return $_POST[$this->columns['id_row']];
+        }else{
+            // записываю сообщение об ошибке заполнения БД данными из формы
+            $_SESSION['res']['answer'] = '<div class="error">' . $answerFail . '</div>';
+            if (!$returnId) $this->redirect();
+        }
+
+    }
+
+    protected function checkExceptFields($arr = []){
+        // если не $arr, записываю в $arr то что пришло из $_POST
+        if (!$arr) $arr = $_POST;
+        // создаю пустую переменную - массив
+        $except = [];
+        // если $arr
+        if ($arr){
+            // то про хоже по $arr в форыче
+            foreach ($arr as $key => $item){
+                // если не $this->columns[$key] записываю в $except ключ $key
+                if (!$this->columns[$key]) $except[] = $key;
+            }
+        }
+        // возвращаю поля исключения
+        return $except;
+    }
+
+    protected function createFile(){
+
+    }
+
+    protected function updateMenuPosition(){
+
+    }
+    // метод формирования алиаса
+    protected function createAlias($id = false){
+        // если есть $this->columns['alias']
+        if ($this->columns['alias']){
+            // в $_POST нет поля ['alias']
+            if (!$_POST['alias']){
+                // если есть $_POST['name']
+                if ($_POST['name']){
+                    // записываю в $alias_str очищенную строку $_POST['name']
+                    $alias_str = $this->clearStr($_POST['name']);
+                }else{
+                    // прохожу по $_POST форычем
+                    foreach($_POST as $key => $item){
+                        // если позиция подстроки 'name' есть в $key и она не равна false и есть $item
+                        if (strpos($key, 'name') !== false && $item){
+                            // записываю в $alias_str алиас
+                            $alias_str = $this->clearStr($item);
+                            break;// заканчиваю цикл
+                        }
+                    }
+                }
+
+            }else{
+                // записываю алиас сначала обрабатываю строку $this->clearStr($_POST['alias']) и записываю её в
+                // $_POST['alias'] затем уже записываю в $alias_str
+                $alias_str = $_POST['alias'] = $this->clearStr($_POST['alias']);
+
+            }
+
+            // подключаю библиотеку
+            $textModify = new \libraries\TextModify();
+            // записываю в $alias транслитирированную строку
+            $alias = $textModify->translit($alias_str);
+
+            // записываю в $where['alias'] полученный $alias
+            $where['alias'] = $alias;
+            // в операнд записываю знак равно
+            $operand[] = '=';
+            // если есть $id то значит мы редактируем а не добавляем данные
+            if ($id){
+                // в $where и его ячейку $this->columns['id_row'] записываю $id
+                $where[$this->columns['id_row']] = $id;
+                // в операнд знак не равно
+                $operand[] = '<>';
+            }
+            // сохраняю в переменную результат работы model->get
+            $res_alias = $this->model->get($this->table, [
+                'fields' => ['alias'],
+                'where' => $where,
+                'operand' => $operand,
+                'limit' => '1'
+            ])[0];
+            // если в $res_alias ничего не пришло
+            if (!$res_alias) {
+                // записываю в $_POST['alias'] то что есть $alias
+                $_POST['alias'] = $alias;
+
+            }else{
+                // в свойство $this->alias записываю $alias
+                $this->alias = $alias;
+                // в $_POST['alias'] сохраняю пустую строку, что бы не было дублирования
+                $_POST['alias'] = '';
+
+            }
+            // если есть $_POST['alias'] и есть $id т.е. это метод редактирования
+            if ($_POST['alias'] && $id){
+                // если в текущем объекте есть метод 'checkOldAlias' то вызываю его и передаю ему $id
+                method_exists($this, 'checkOldAlias') && $this->checkOldAlias($id);
+            }
+
+
+        }
+
+    }
+    // метод проверки алиасов
+    protected function checkAlias($id){
+        // если $id
+        if ($id){
+            //если есть свойство $this->alias
+            if ($this->alias){
+                // в $this->alias добавляю с дефисом идентификатор
+                $this->alias .= '-' . $id;
+                // вызываю метод модели model->edit, что бы отредактировать алиас
+                $this->model->edit($this->table, [
+                    'fields' => ['alias' => $this->alias],
+                    'where' => [$this->columns['id_row'] => $id]
+                ]);
+                // возвращаю true в случае успеха
+                return true;
+            }
+        }
+        // возвращаю false если ничего не выполнится
+        return false;
 
     }
 

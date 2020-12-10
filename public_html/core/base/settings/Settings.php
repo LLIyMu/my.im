@@ -59,15 +59,17 @@ class Settings
     // массив шаблонов
     private $templateArr = [
         'text' => ['name'],
-        'textarea' => ['keywords'],
+        'textarea' => ['keywords', 'content'],
         'radio' => ['visible'],
         'select' => ['menu_position', 'parent_id'],
         'img' => ['img'],
-        'gallery_img' => ['gallery_img']
+        'gallery_img' => ['gallery_img'],
+        'content' => []
     ];
 
     private $translate = [
-        'name' => ['Название', 'Не более 100 символов']
+        'name' => ['Название', 'Не более 100 символов'],
+        'keywords' => ['Ключевые слова', 'Не более 70 символов']
     ];
     // свойство радио-кнопки
     private $radio = [
@@ -76,14 +78,15 @@ class Settings
     // свойтсво корневых элементов (категория - подкатегория)
     private $rootItems = [
         'name' => 'Корневая',
-        'tables' => ['articles']
+        'tables' => ['articles'],
+        'content' =>[]
     ];
 
     // блоки для сорттировки меню (разделитель блоков)
     private $blockNeedle = [
         'vg-rows' => [],
         'vg-img' => ['img'],
-        'vg-content' => ['content']
+        'vg-content' => ['content', 'textarea']
     ];
     // свойство валидации, добавляю сюда то что нужно будет отвалидировать перед добавлением в БД
     private $validation = [

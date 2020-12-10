@@ -308,4 +308,26 @@ abstract class BaseModel extends BaseModelMethods
         // возвращаю полученные колонки
         return $columns;
     }
+    // метод для показа всех таблиц из БД
+    final public function showTables(){
+        // записываю запрос к БД в переменную $query
+        $query = 'SHOW TABLES';
+        // получаю список таблиц в $tables
+        $tables = $this->query($query);
+        // создаю пустой массив
+        $table_arr = [];
+        // если в $tables что то пришло
+        if ($tables){
+            // прохожу по $tables циклом форейч
+            foreach($tables as $table){
+                // записываю в $table_arr первый элемент массива $table, который возвращает функция reset()
+                $table_arr[] = reset($table);
+
+            }
+
+        }
+        // возвращаю массив
+        return $table_arr;
+    }
+
 }
