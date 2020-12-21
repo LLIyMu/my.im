@@ -49,6 +49,26 @@ trait BaseMethods
 
         exit;
     }
+
+    protected function getStyles(){
+
+        if($this->styles){
+
+            foreach($this->styles as $style) echo '<link rel="stylesheet" href="' . $style . '">';
+
+        }
+
+    }
+
+    protected function getScripts(){
+
+        if ($this->scripts){
+
+            foreach($this->scripts as $script) echo '<script src="' . $script . '"></script>';
+
+        }
+
+    }
     // метод записи логов принимает сообщение, филе (по умолчанию log.txt), событие(ошибка) $event
     protected function writeLog($message, $file = 'log.txt', $event = 'Fault'){
         // создаю метку времени и сохраняю её в переменную $dateTime

@@ -36,7 +36,7 @@ class ShowController extends BaseAdmin
         if ($this->columns['name']) $fields['name'] = 'name';
         if ($this->columns['img']) $fields['img'] = 'img';
 
-        if (count($fields < 3)){
+        if (@count($fields < 3)){
             foreach ($this->columns as $key => $item){
                 // если не поле $fields['img'] и его позиция в массиве не равна false
                 if (!$fields['name'] && strpos($key, 'name') !== false){

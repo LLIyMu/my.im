@@ -19,7 +19,7 @@ const QTY_LINKS = 3;//3 ссылки навигации
 
 const ADMIN_CSS_JS = [ //пути к файлам JS, CSS админ панели
     'styles' => ['css/main.css'],
-    'scripts' => []
+    'scripts' => ['js/frameworkfunctions.js', 'js/scripts.js']
 ];
 const USER_CSS_JS = [ //пути к файлам JS, CSS пользовательской части сайта
     'styles' => [],

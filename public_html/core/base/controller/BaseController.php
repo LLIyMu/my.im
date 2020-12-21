@@ -36,6 +36,8 @@ abstract class BaseController
     protected $scripts;
 
     protected $userId;
+    // свойство данных
+    protected $data;
     // метод обрабатывающий входящие парматеры и передающий их методу request()
     public function route(){
         //сохраняю в переменную $controller имя класса с правильным слешем получаю из адресной строки
@@ -68,7 +70,7 @@ abstract class BaseController
         //в $outputData содержится вся информация для сбора готовой страницы шаблона или вида
         $outputData = $args['outputMethod'];
         //сохраняю в переменнную метод который выполнится первым! при вызове метода request().
-        //в нём содержится водная информация
+        //в нём содержится вводная информация
         $data = $this->$inputData();
         //если в метод $outputData() пришли данные сохраняю в $page все данные для отображения видов
         if (method_exists($this, $outputData)) {
