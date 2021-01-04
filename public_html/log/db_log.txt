@@ -1,4 +1,4 @@
-Fault: 15-12-2020 5:35:05 - Ошибка в SQL запросе: SHOW COLUMNS FROM parsing_data - 2006 MySQL server has gone away
+Fault: 30-12-2020 10:10:15 - Ошибка в SQL запросе: SELECT teachers.*,students.name as student_name FROM teachers LEFT JOIN stud_teach ON teachers.id=stud_teach.teachers LEFT JOIN students ON stud_teach.students=students.id WHERE teachers.id IN ('5','6')    - 2006 MySQL server has gone away
 file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
 In line 43
 

@@ -9,21 +9,96 @@ abstract class BaseModelMethods
 
     // массив функций для Mysql запроса
     protected $sqlFunc = ['NOW()'];
+    // свойство для записи полей таблицы БД
+    protected $tableRows;
 
     // метод создания выборки полей для запроса в БД
-    protected function createFields($set, $table = false){
-        // если в $set пришел массив и он не пуст, то записываю, если нет записываю символ выбрать всё ['*']
-        $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : ['*'];
-        // если в $table что то пришло и не $set['no_concat'] то записываю и конкатенирую точку,
-        $table = ($table && !$set['no_concat']) ? $table . '.' : '';
+    protected function createFields($set, $table = false, $join = false){
 
         $fields = '';
+        // по умолчанию флаг на false
+        $join_structure = false;
+        // если это метод join или существует массив с ключем $set['join_structure'] и $set['join_structure'] и есть
+        // указанная таблица
+        if (($join || (isset($set['join_structure'])) && $set['join_structure']) && $table){
+            // ставлю флаг структурирования массива полученного из БД в true
+            $join_structure = true;
+            // вызываю метод показа полей передавая ему таблицу
+            $this->showColumns($table);
+            // если в свойстве tableRows и текущей таблице есть multi_id_row, обнуляю  $set['fields']
+            if (isset($this->tableRows[$table]['multi_id_row'])) $set['fields'] = [];
 
-        foreach ($set['fields'] as $field){
-            $fields .= $table . $field . ',';
+        }
+        // в $concat_table записываю если пришла $table и не $set['concat'], то записываю таблицу которая пришла, и
+        // конкатенирую точку, иначе записываю пустую строку
+        $concat_table = $table && !$set['concat'] ? $table . '.' : '';
+        // если не существует $set['fields'] или не массив $set['fields'] или не $set['fields']
+        if (!isset($set['fields']) || !is_array($set['fields']) || !$set['fields']){
+            // если это не метод join
+            if (!$join){
+                // записываю в $fields таблицу и *(ALL) для SQL запроса
+                $fields = $concat_table . '*,';
+
+            }else{
+                // прохожу по свойству tableRows и текущей таблице циклом foreach
+                foreach($this->tableRows[$table] as $key => $item){
+                    // если $key не равна служебному id ('id_row') и $key не равен 'multi_id_row'
+                    if ($key !== 'id_row' && $key !== 'multi_id_row'){
+                        // в $fields записываю строку для join
+                        $fields .= $concat_table . $key . ' as TABLE' . $table . 'TABLE_' . $key . ',';
+
+                    }
+
+                }
+
+            }
+
+        }else{
+            // ставлю флаг в false
+            $id_field = false;
+            // прохожу по полям $set['fields']
+            foreach ($set['fields'] as $field){
+
+                if ($join_structure && !$id_field && $this->tableRows[$table] === $field){
+
+                    $id_field = true;
+
+                }
+                // если $field
+                if ($field){
+                    // если это метод join И $join_structure И $field не псевдоним
+                    if ($join && $join_structure && !preg_match('/\s+as\s+/i', $field)){
+
+                        $fields .= $concat_table . $field . ' as TABLE' . $table . 'TABLE_' . $field . ',';
+
+                    }else{
+                        // иначе в $fields добавляю $concat_table и поля
+                        $fields .= $concat_table . $field . ',';
+
+                    }
+
+                }
+
+            }
+            // если не $id_field И $join_structure
+            if (!$id_field && $join_structure){
+                // если это метод join
+                if ($join){
+                    // создаю строку для запроса
+                    $fields .= $concat_table . $this->tableRows[$table]['id_row'] . ' as TABLE' . $table . 'TABLE_' .$this->tableRows[$table]['id_row'] . ',';
+
+                }else{
+
+                    $fields .= $concat_table . $this->tableRows[$table]['id_row'] . ',';
+
+                }
+
+            }
+
         }
 
         return $fields;
+
     }
     //метод создания строки сортировки для запроса
     protected function createOrder($set, $table = false){
@@ -156,7 +231,7 @@ abstract class BaseModelMethods
             }
             // убираю последний $condition, substr обрезает подстроку в строке $where с 0 элемента на позиции strrpos
             //($where - где обрезаем, $condition - что обрезаем) т.е. последний элемент
-            $where = substr($where, 0, strrpos($where, $condition));
+            $where = substr($where, 0, strrpos($where,   $condition));
 
         }
         // возвращаю строку
@@ -169,7 +244,7 @@ abstract class BaseModelMethods
         $fields = '';
         $join = '';
         $where = '';
-        $tables = '';
+
         // если пришел массив ['join']
         if ($set['join']){
             // записываю в $join_table таблицу для соединения
@@ -218,7 +293,6 @@ abstract class BaseModelMethods
                     // присваиваю в $join_table текущую таблицу $key что бы следующая итерация цикла могла работать с
                     // предыдущей
                     $join_table = $key;
-                    $tables .= ', ' . trim($join_table);
                     // если в $new_where что то есть т.е. это новая инструкция where
                     if ($new_where){
                         // если в $item['where'] что то содержится то в $new_where записываем false
@@ -233,14 +307,14 @@ abstract class BaseModelMethods
                         $group_condition = $item['group_condition'] ? strtoupper($item['group_condition']) : 'AND';
                     }
 
-                    $fields .= $this->createFields($item, $key);
+                    $fields .= $this->createFields($item, $key, $set['join_structure']);
                     $where .= $this->createWhere($item, $key, $group_condition);
                 }
             }
 
         }
         // возвращаю результат работы сохранённый в переменных с помощью compact()
-        return compact('fields', 'join', 'where', 'tables');
+        return compact('fields', 'join', 'where');
 
     }
 
@@ -389,6 +463,12 @@ abstract class BaseModelMethods
         }
 
         return rtrim($update, ',');
+
+    }
+
+    protected function joinStructure($res, $table){
+
+
 
     }
 

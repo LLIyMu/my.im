@@ -143,7 +143,15 @@ abstract class BaseModel extends BaseModelMethods
 
         $query = "SELECT $fields FROM $table $join $where $order $limit";
 
-        return $this->query($query);
+        $res = $this->query($query);
+        // если существует флаг $set['join_structure'] и он не false и пришел $res
+        if (isset($set['join_structure']) && $set['join_structure'] && $res){
+
+            $res = $this->joinStructure($res, $table);
+
+        }
+
+        return $res;
 
     }
 
@@ -246,7 +254,7 @@ abstract class BaseModel extends BaseModelMethods
     ],
      */
     // метод удаления полей из БД или связей полей таблиц по ключам
-    public function delete($table, $set){
+    public function delete($table, $set = []){
         // записываю полученую талицу
         $table = trim($table);
         // создаю строку запроса WHERE
@@ -289,24 +297,45 @@ abstract class BaseModel extends BaseModelMethods
         return $this->query($query, 'u');
 
     }
-    // служебный метод показа колонок
+    // служебный метод показа колонок таблицы БД
     final public function showColumns($table){
-        $query = "SHOW COLUMNS FROM $table";
+        // если не существует свойство $this->tableRows[$table] или оно не заполнено
+        if (!isset($this->tableRows[$table]) || $this->tableRows[$table]) {
+            // записываю в $query SQL запрос с той таблицей которая пришла на вход методу
+            $query = "SHOW COLUMNS FROM $table";
+            // записываю результат в переменную $res
+            $res = $this->query($query);
+            // если в $res что то есть
+            if ($res){
+                // в свойство $this->tableRows[$table] записываю пустой массив
+                $this->tableRows[$table] = [];
 
-        $res = $this->query($query);
+                foreach ($res as $row){
+                    // в свойство $this->tableRows[$table] и его ячейку [$row['Field']] записываю поля $row
+                    $this->tableRows[$table][$row['Field']] = $row;
+                    // если есть поле $row['Key'] и оно равно 'PRI' т.е. первичный ключ
+                    if ($row['Key'] === 'PRI'){
+                        // если не существует поля 'id_row'
+                        if (!isset($this->tableRows[$table]['id_row'])) {
+                            // записываю его
+                            $this->tableRows[$table]['id_row'] = $row['Field'];
 
-        $columns = [];
+                        }else{
+                            // если не существует поля 'multi_id_row' то записываю его из $this->tableRows[$table]['id_row']
+                            if (!isset($this->tableRows[$table]['multi_id_row'])) $this->tableRows[$table]['multi_id_row'] = $this->tableRows[$table]['id_row'];
+                            // если поле ['multi_id_row'] записано то сохраняю туда $row['field']
+                            $this->tableRows[$table]['multi_id_row'][] = $row['field'];
 
-        if ($res){
+                        }
 
-            foreach ($res as $row){
-                $columns[$row['Field']] = $row;
-                if ($row['Key'] === 'PRI') $columns['id_row'] = $row['Field'];
+                    }
+                }
+
             }
 
         }
-        // возвращаю полученные колонки
-        return $columns;
+        // возвращаю полученные поля
+        return $this->tableRows[$table];
     }
     // метод для показа всех таблиц из БД
     final public function showTables(){

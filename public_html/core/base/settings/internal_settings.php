@@ -10,7 +10,7 @@ const ADMIN_TEMPLATE = 'core/admin/view/';//шаблоны видов стран
 const UPLOAD_DIR = 'userfiles/';//директория для добавления изображений из административной панели
 
 const COOKIE_VERSION = '1.0.0';//версия куки сайта
-const CRYPT_KEY = '';//ключ шифрования
+const CRYPT_KEY = '!z%C*F-JaNdRgUkXt7w9z$C&F)J@NcRfYq3t6v9y$B&E)H@MgVkYp3s6v8y/B?E(NdRgUkXp2s5v8x/A)J@NcRfUjXn2r5u8B&E)H@McQfTjWnZr8y/B?E(H+MbQeThWs5u8x/A?D(G+KbPeXn2r5u7x!A%D*G-K';//ключ шифрования и дешифрования(обратимое шифрование)
 const COOKIE_TIME = 60;//время бездействия админа в админ панели
 const BLOCK_TIME = 3;//время блокировки пользователя который пытается подобрать пароль к сайту, применяется после 2х
                      // неудачныйх попыток
