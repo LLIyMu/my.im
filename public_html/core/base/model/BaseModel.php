@@ -300,31 +300,39 @@ abstract class BaseModel extends BaseModelMethods
     // служебный метод показа колонок таблицы БД
     final public function showColumns($table){
         // если не существует свойство $this->tableRows[$table] или оно не заполнено
-        if (!isset($this->tableRows[$table]) || $this->tableRows[$table]) {
+        if (!isset($this->tableRows[$table]) || !$this->tableRows[$table]) {
+
+            $checkTable = $this->createTableAlias($table);
+
+            if ($this->tableRows[$checkTable['table']]){
+
+                return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
+
+            }
             // записываю в $query SQL запрос с той таблицей которая пришла на вход методу
-            $query = "SHOW COLUMNS FROM $table";
+            $query = "SHOW COLUMNS FROM {$checkTable['table']}";
             // записываю результат в переменную $res
             $res = $this->query($query);
             // если в $res что то есть
             if ($res){
                 // в свойство $this->tableRows[$table] записываю пустой массив
-                $this->tableRows[$table] = [];
+                $this->tableRows[$checkTable['table']] = [];
 
                 foreach ($res as $row){
                     // в свойство $this->tableRows[$table] и его ячейку [$row['Field']] записываю поля $row
-                    $this->tableRows[$table][$row['Field']] = $row;
+                    $this->tableRows[$checkTable['table']][$row['Field']] = $row;
                     // если есть поле $row['Key'] и оно равно 'PRI' т.е. первичный ключ
                     if ($row['Key'] === 'PRI'){
                         // если не существует поля 'id_row'
-                        if (!isset($this->tableRows[$table]['id_row'])) {
+                        if (!isset($this->tableRows[$checkTable['table']]['id_row'])) {
                             // записываю его
-                            $this->tableRows[$table]['id_row'] = $row['Field'];
+                            $this->tableRows[$checkTable['table']]['id_row'] = $row['Field'];
 
                         }else{
                             // если не существует поля 'multi_id_row' то записываю его из $this->tableRows[$table]['id_row']
-                            if (!isset($this->tableRows[$table]['multi_id_row'])) $this->tableRows[$table]['multi_id_row'] = $this->tableRows[$table]['id_row'];
+                            if (!isset($this->tableRows[$checkTable['table']]['multi_id_row'])) $this->tableRows[$checkTable['table']]['multi_id_row'][] = $this->tableRows[$checkTable['table']]['id_row'];
                             // если поле ['multi_id_row'] записано то сохраняю туда $row['field']
-                            $this->tableRows[$table]['multi_id_row'][] = $row['field'];
+                            $this->tableRows[$checkTable['table']]['multi_id_row'][] = $row['Field'];
 
                         }
 
@@ -332,6 +340,11 @@ abstract class BaseModel extends BaseModelMethods
                 }
 
             }
+
+        }
+        if (isset($checkTable) && $checkTable['table'] !== $checkTable['alias']){
+
+            return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
 
         }
         // возвращаю полученные поля

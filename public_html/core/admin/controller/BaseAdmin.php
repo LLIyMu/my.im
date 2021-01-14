@@ -33,6 +33,8 @@ abstract class BaseAdmin extends BaseController
     protected $alias;
     // свойство служебных сообщений
     protected $messages;
+    // свойство настроек по умолчанию
+    protected $settings;
 
     protected $translate;
     protected $blocks = [];
@@ -558,5 +560,221 @@ abstract class BaseAdmin extends BaseController
         return false;
 
     }
+    // промежуточный(служебный) метод сортировки данных из БД
+    protected function createOrderData($table){
 
+        // получаю имя колонок родительской таблицы
+        $columns = $this->model->showColumns($table);
+
+        if (!$columns){
+            throw new RouteException('Отсутствуют поля в таблице' . $table);
+        }
+
+        // записываю пустую строку в переменные
+        $name = '';
+        $order_name = '';
+        // если в $columns есть что то
+        if ($columns['name']){
+            // записываю в $order_name и $name строку 'name'
+            $order_name = 'name';
+            $name = 'name';
+        }else{
+            foreach ($columns as $key => $value){
+                // если в $key 'name' не равна false
+                if (strpos($key, 'name') !== false){
+                    $order_name = $key;
+                    // записываю в $name псевдоним
+                    $name = $key . ' as name';
+                }
+            }
+            // если в $name ничего нет, записываю псевдоним текущей таблицы $columns['id_row'] как ' as name'
+            if (!$name) $name = $columns['id_row'] . ' as name';
+
+        }
+
+        $parent_id = '';
+        $order = [];
+
+        if ($columns['parent_id'])
+            // в ячейку массива $order и в $parent_id записываю 'parent_id'
+            $order[] = 'parent_id';
+            $parent_id = 'parent_id';
+
+        if ($columns['menu_position']) $order[] = 'menu_position';
+            // иначе в $order записываю значение переменной $order_name
+            else $order[] = $order_name;
+
+        return compact('name', 'parent_id', 'order', 'columns');
+    }
+
+    protected function createManyToMany($settings = false){
+        // Если не $settings то записываю свойство по умолчанию, иначе, записываю Settings::instance()
+        if (!$settings) $settings = $this->settings ?: Settings::instance();
+
+        $manyToMany = $settings::get('manyToMany');
+        $blocks = $settings::get('blockNeedle');
+
+        if ($manyToMany){
+
+            foreach($manyToMany as $mTable => $tables){
+                // array_search вернет 1 если найдёт $this->table в $tables и 0 если нет
+                $targetKey = array_search($this->table, $tables);
+                // если $targetKey не равна false
+                if ($targetKey !== false){
+                    // если $targetKey = 1 записываю 0 в $otherKey, если $targetKey = 1 то записываю 0 в $otherKey
+                    $otherKey = $targetKey ? 0 : 1;
+                    // записываю ячейку ['checkboxlist'] из массива ['templateArr']
+                    $checkBoxList = $settings::get('templateArr')['checkboxlist'];
+                    // если не $checkBoxList ИЛИ в массиве $checkBoxList нет таблицы $tables и её ячейки [$otherKey],
+                    // перехожу на следующую итерацию цикла
+                    if (!$checkBoxList || !in_array($tables[$otherKey], $checkBoxList)) continue;
+                    // если в свойстве translate нет [$tables[$otherKey]]
+                    if (!$this->translate[$tables[$otherKey]]){
+                        // если в $settings есть 'projectTables'
+                        if ($settings::get('projectTables'))
+                            // в свойство translate и его ячейку [$tables[$otherKey]] записываю то что лежит
+                            // в $settings 'projectTables' [$tables[$otherKey]] и её ячейке ['name']]
+                            $this->translate[$tables[$otherKey]] = [$settings::get('projectTables')[$tables[$otherKey]]['name']];
+
+                    }
+                    // в $orderData записываю результат работы метода createOrderData передав ему на вход $tables[$otherKey]
+                    $orderData = $this->createOrderData($tables[$otherKey]);
+                    // ставлю значение по умолчанию в false
+                    $insert = false;
+                    // если в $blocks что то есть
+                    if ($blocks){
+
+                        foreach($blocks as $key => $item){
+                            // если в массиве $item есть $tables[$otherKey]
+                            if (in_array($tables[$otherKey], $item)){
+                                // в $this->blocks[$key][] записываю $tables[$otherKey]
+                                $this->blocks[$key][] = $tables[$otherKey];
+                                // в $insert ставлю true
+                                $insert = true;
+                                // завершаю цикл
+                                break;
+
+                            }
+
+                        }
+
+                    }
+
+                    if (!$insert) $this->blocks[array_keys($this->blocks)[0]][] = $tables[$otherKey];
+
+                    $foreign = [];
+
+                    if ($this->data){
+
+                        $res = $this->model::get($mTable, [
+                            'fields' => [$tables[$otherKey] . '_' . $orderData['columns']['id_row']],
+                            'where' => [$this->table . '_' . $this->columns['id_row'] = $this->data[$this->columns['id_row']]]
+                        ]);
+
+                        if ($res){
+
+                            foreach($res as $item){
+
+                                $foreign[] = $item[$tables[$otherKey] . '_' . $orderData['columns']['id_row']];
+
+                            }
+
+                        }
+
+                    }
+
+                    if (isset($tables['type'])){
+
+                        $data = $this->model->get($tables[$otherKey], [
+                            'fields' => [$orderData['columns']['id_row'] . ' as id', $orderData['name'], $orderData['parent_id']],
+                            'order' => $orderData['order']
+                        ]);
+
+                        if ($data){
+
+                            foreach($data as $item){
+
+                                if ($tables['type'] === 'root' && $orderData['parent_id']){
+
+                                    if ($item[$orderData['parent_id']] === null){
+
+                                        $this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['sub'][] = $item;
+
+                                    }
+
+                                }elseif ($tables['type'] === 'child' && $orderData['parent_id']){
+
+                                    if ($item[$orderData['parent_id']] !== null){
+
+                                        $this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['sub'][] = $item;
+
+                                    }
+
+                                }else{
+
+                                    $this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['sub'][] = $item;
+
+                                }
+
+                                if (in_array($item['id'], $foreign))
+                                    $this->data[$tables[$otherKey]][$tables[$otherKey]][] = $item['id'];
+
+                            }
+
+                        }
+
+                    }elseif ($orderData['parent_id']){
+                        // в $parent записываю $tables[$otherKey]
+                        $parent = $tables[$otherKey];
+                        // получаю в $keys результат работы метода showForeignKeys передавая ему таблицу
+                        $keys = $this->model->showForeignKeys($tables[$otherKey]);
+                        // если в $keys что то есть
+                        if ($keys){
+
+                            foreach ($keys as $item){
+                                // если $item и его ячейка ['COLUMN_NAME'] равна 'parent_id'
+                                if ($item['COLUMN_NAME'] === 'parent_id'){
+                                    // в родителя записываю имя таблицы с которой будет связь
+                                    $parent = $item['REFERENCED_TABLE_NAME'];
+                                    // прерываю цикл
+                                    break;
+
+                                }
+
+                            }
+
+                        }
+
+                        if ($parent === $tables[$otherKey]){
+
+                            $data = $this->model->get($tables[$otherKey], [
+                                'fields' => [$orderData['columns']['id_row'] . ' as id', $orderData['name'], $orderData['parent_id']],
+                                'order' => $orderData['order']
+                            ]);
+
+                            if ($data){
+                                // до тех пор пока в $data будут ключи цикл будет выполняться и будут записыватся в $key
+                                while(($key = key($data)) !== null){
+
+                                    if (!$data)
+
+                                }
+
+                            }
+
+                        }else{
+
+
+
+                        }
+                        exit;
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
 }

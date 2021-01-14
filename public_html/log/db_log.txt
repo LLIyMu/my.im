@@ -1,4 +1,44 @@
-Fault: 30-12-2020 10:10:15 - Ошибка в SQL запросе: SELECT teachers.*,students.name as student_name FROM teachers LEFT JOIN stud_teach ON teachers.id=stud_teach.teachers LEFT JOIN students ON stud_teach.students=students.id WHERE teachers.id IN ('5','6')    - 2006 MySQL server has gone away
+Fault: 09-01-2021 11:08:04 - Ошибка в SQL запросе: SELECT goods.*,goods_filters.students as TABLEgoods_filtersTABLE_students,goods_filters.teachers as TABLEgoods_filtersTABLE_teachers,filters.name as TABLEfiltersTABLE_student_name,filters.content as TABLEfiltersTABLE_content,filters.id as TABLEfiltersTABLE_id,filters.id as TABLEfiltersTABLE_id,filters.name as TABLEfiltersTABLE_name,filters.content as TABLEfiltersTABLE_content,filters.parent_id as TABLEfiltersTABLE_parent_id,filters.visible as TABLEfiltersTABLE_visible FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters ON goods_filters.students=filters.id LEFT JOIN filters ON filters.parent_id=filters.id WHERE goods.id IN ('5','6')    - 1066 Not unique table/alias: 'filters'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 09-01-2021 12:09:55 - Ошибка в SQL запросе: SELECT goods.*,goods_filters.students as TABLEgoods_filtersTABLE_students,goods_filters.teachers as TABLEgoods_filtersTABLE_teachers,filters f.name as TABLEfilters fTABLE_student_name,filters f.content as TABLEfilters fTABLE_content,filters f.id as TABLEfilters fTABLE_id,filters.id as TABLEfiltersTABLE_id,filters.name as TABLEfiltersTABLE_name,filters.content as TABLEfiltersTABLE_content,filters.parent_id as TABLEfiltersTABLE_parent_id,filters.visible as TABLEfiltersTABLE_visible FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=filters f.id LEFT JOIN filters ON filters f.parent_id=filters.id WHERE goods.id IN ('5','6')    - 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '.name as TABLEfilters fTABLE_student_name,filters f.content as TABLEfilters fTAB' at line 1
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 09-01-2021 12:17:06 - Ошибка в SQL запросе: SHOW COLUMNS FROM filters - 2006 MySQL server has gone away
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 09-01-2021 19:03:08 - Ошибка в SQL запросе: SELECT goods.*,f.name as TABLEfTABLE_student_name,f.content as TABLEfTABLE_content,f.id as TABLEfTABLE_id,filters.id as TABLEfiltersTABLE_id,filters.name as TABLEfiltersTABLE_name,filters.content as TABLEfiltersTABLE_content,filters.parent_id as TABLEfiltersTABLE_parent_id,filters.visible as TABLEfiltersTABLE_visible FROM goods LEFT JOIN filters f ON goods.students=goods.id LEFT JOIN filters ON f.parent_id=goods.id WHERE goods.id IN ('5','6')  ORDER BY goods.RAND() ASC  - 1054 Unknown column 'goods.students' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 09-01-2021 19:08:32 - Ошибка в SQL запросе: SELECT goods.*,goods_filters.students as TABLEgoods_filtersTABLE_students,goods_filters.teachers as TABLEgoods_filtersTABLE_teachers,f.name as TABLEfTABLE_student_name,f.content as TABLEfTABLE_content,f.id as TABLEfTABLE_id,filters.id as TABLEfiltersTABLE_id,filters.name as TABLEfiltersTABLE_name,filters.content as TABLEfiltersTABLE_content,filters.parent_id as TABLEfiltersTABLE_parent_id,filters.visible as TABLEfiltersTABLE_visible FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.RAND() ASC  - 1305 FUNCTION goods.RAND does not exist
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 12-01-2021 5:19:58 - Ошибка в SQL запросе: SHOW COLUMNS FROM teachers - 1146 Table 'im.teachers' doesn't exist
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 12-01-2021 18:41:30 - Ошибка в SQL запросе: SHOW COLUMNS FROM students - 1146 Table 'im.students' doesn't exist
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 13-01-2021 15:30:14 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 13-01-2021 18:41:54 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 4:39:57 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 7:35:39 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
 file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
 In line 43
 

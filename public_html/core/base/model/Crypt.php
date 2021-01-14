@@ -31,34 +31,34 @@ class Crypt
         return $this->cryptCombine($cipherText, $iv, $hmac);
 
     }
-
+    // метод дешифровки
     public function decrypt($str){
 
         // в переменную $ivlen записываю длину инициализирующего вектора шифра
         $ivlen = openssl_cipher_iv_length($this->cryptMethod);
-
+        // в $crypt_data сохраняю всю строку, передавая методу cryptUnCombine $str и $ivlen
         $crypt_data = $this->cryptUnCombine($str, $ivlen);
-
+        // сохраняю расшифровываю строку
         $original_plaintext = openssl_decrypt($crypt_data['str'], $this->cryptMethod, CRYPT_KEY, OPENSSL_RAW_DATA, $crypt_data['iv']);
-
+        // сохраняю хешированную строку
         $calcmac = hash_hmac($this->hasheAlgoritm, $crypt_data['str'], CRYPT_KEY, true);
-
+        // если поданные строки идеинтичны возвращаю расшифрованную строку
         if (hash_equals($crypt_data['hmac'], $calcmac)) return $original_plaintext;
 
         return false;
     }
-
+    // кастомный алгоритм шифрования строки, принимает строку - $str, последовательность байт - $iv, хеш - $hmac
     protected function cryptCombine($str, $iv, $hmac){
 
         $new_str = '';
-
+        // записываю длинну строки в $str_len
         $str_len = strlen($str);
 
         $counter = (int)ceil(strlen(CRYPT_KEY) / ($str_len + $this->hasheLenght));
 
         $progress = 1;
-
-        if ($counter >= $str_len) $counter = 1;
+        // если длинна $counter больше или равна $str_len
+        if ($counter >= $str_len) $counter = 1; // то в $counter присваиваю значение 1
 
         for ($i = 0; $i < $str_len; $i++){
 

@@ -48,19 +48,20 @@ class Settings
     // путь хранения служебных сообщений
     private $messages = 'core/base/messages/';
     // таблица по умолчанию
-    private $defaultTable = 'teachers';
+    private $defaultTable = 'goods';
     // шаблоны формы
     private $formTemplates = PATH . 'core/admin/view/include/form_templates/';
 
     private $projectTables = [
-        'teachers' => ['name' => 'Учителя', 'img' => 'pages.png'],
-        'students' => ['name' => 'Ученики']
+        'goods' => ['name' => 'Товары', 'img' => 'pages.png'],
+        'filters' => ['name' => 'Фильтры']
     ];
     // массив шаблонов
     private $templateArr = [
         'text' => ['name'],
         'textarea' => ['keywords', 'content'],
         'radio' => ['visible'],
+        'checkboxlist' => ['filters'],
         'select' => ['menu_position', 'parent_id'],
         'img' => ['img'],
         'gallery_img' => ['gallery_img'],
@@ -82,6 +83,9 @@ class Settings
         'content' =>[]
     ];
 
+    protected $manyToMany = [
+        'goods_filters' => ['goods', 'filters'] // 'type' => 'child' || 'root'
+    ];
     // блоки для сорттировки меню (разделитель блоков)
     private $blockNeedle = [
         'vg-rows' => [],

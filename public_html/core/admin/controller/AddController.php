@@ -28,8 +28,10 @@ class AddController extends BaseAdmin
 
         $this->createOutputData();
 
+        $this->createManyToMany();
+
     }
-    // метод формирования внешних ключей для метода createForeignData() принимает $arr массивб и
+    // метод формирования внешних ключей для метода createForeignData() принимает $arr массив
     protected function createForeignProperty($arr, $rootItems){
         // если в массиве $rootItems['tables'] есть таблица $this->table
         if (in_array($this->table, $rootItems['tables'])){
@@ -39,26 +41,9 @@ class AddController extends BaseAdmin
             // записываю в foreignData с ячейкой ['name'] то что содержится в $rootItems['name']
             $this->foreignData[$arr['COLUMN_NAME']][0]['name'] = $rootItems['name'];
         }
-        // получаю имя колонок родительской таблицы
-        $columns = $this->model->showColumns($arr['REFERENCED_TABLE_NAME']);
-        // записываю пустую строку
-        $name = '';
-        // если в $columns есть что то
-        if ($columns['name']){
-            // записываю в $name строку 'name'
-            $name = 'name';
-        }else{
-            foreach ($columns as $key => $value){
-                // если в $key 'name' не равна false
-                if (strpos($key, 'name') !== false){
-                    // записываю в $name псевдоним
-                    $name = $key . ' as name';
-                }
-            }
-            // если в $name ничего нет, записываю псевдоним текущей таблицы $columns['id_row'] как ' as name'
-            if (!$name) $name = $columns['id_row'] . ' as name';
+        // в $orderData сохраняю результат работы метода createOrderData передаю текущую таблицу
+        $orderData = $this->createOrderData($arr['REFERENCED_TABLE_NAME']);
 
-        }
         // если в данные уже заполнены
         if ($this->data){
             // если таблица ссылается сама на себя т.е. REFERENCED_TABLE_NAME === $this->table текущей таблице
@@ -72,9 +57,10 @@ class AddController extends BaseAdmin
         // формирую в переменную все данные которые отонсятся к таблице которую получили из model, так же записываю
         // все поля 'fields', 'where' если пришло, 'operand' если пришел
         $foreign = $this->model->get($arr['REFERENCED_TABLE_NAME'],[
-            'fields' => [$arr['REFERENCED_COLUMN_NAME'] . ' as id', $name],
+            'fields' => [$arr['REFERENCED_COLUMN_NAME'] . ' as id', $orderData['name'], $orderData['parent_id']],
             'where' => $where,
-            'operand' => $operand
+            'operand' => $operand,
+            'order' => $orderData['order']
         ]);
         // если свойства заполнились
         if ($foreign){

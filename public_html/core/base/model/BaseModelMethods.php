@@ -8,15 +8,30 @@ abstract class BaseModelMethods
 {
 
     // массив функций для Mysql запроса
-    protected $sqlFunc = ['NOW()'];
+    protected $sqlFunc = ['NOW()', 'RAND()'];
     // свойство для записи полей таблицы БД
     protected $tableRows;
 
     // метод создания выборки полей для запроса в БД
     protected function createFields($set, $table = false, $join = false){
+        // если в массиве $set есть ключ 'fields' И $set['fields'] равен null, возвращаю пустую строку
+        if (array_key_exists('fields', $set) && $set['fields'] === null) return '';
+
+        $concat_table = '';
+        $alias_table = $table;
+        // если не $set['no_concat'] т.е. он равен false, то присоединяем
+        if (!$set['no_concat']){
+            // в $arr записываю результат работы метода createTableAlias передавая ему текущую $table
+            $arr = $this->createTableAlias($table);
+            // в $concat_table записываю $arr['alias'] и конкатенирую точку
+            $concat_table = $arr['alias'] . '.';
+            // в $alias_table записываю $arr['alias']
+            $alias_table = $arr['alias'];
+
+        }
 
         $fields = '';
-        // по умолчанию флаг на false
+        // по умолчанию ставлю флаг в false
         $join_structure = false;
         // если это метод join или существует массив с ключем $set['join_structure'] и $set['join_structure'] и есть
         // указанная таблица
@@ -29,9 +44,6 @@ abstract class BaseModelMethods
             if (isset($this->tableRows[$table]['multi_id_row'])) $set['fields'] = [];
 
         }
-        // в $concat_table записываю если пришла $table и не $set['concat'], то записываю таблицу которая пришла, и
-        // конкатенирую точку, иначе записываю пустую строку
-        $concat_table = $table && !$set['concat'] ? $table . '.' : '';
         // если не существует $set['fields'] или не массив $set['fields'] или не $set['fields']
         if (!isset($set['fields']) || !is_array($set['fields']) || !$set['fields']){
             // если это не метод join
@@ -41,11 +53,11 @@ abstract class BaseModelMethods
 
             }else{
                 // прохожу по свойству tableRows и текущей таблице циклом foreach
-                foreach($this->tableRows[$table] as $key => $item){
+                foreach($this->tableRows[$alias_table] as $key => $item){
                     // если $key не равна служебному id ('id_row') и $key не равен 'multi_id_row'
                     if ($key !== 'id_row' && $key !== 'multi_id_row'){
                         // в $fields записываю строку для join
-                        $fields .= $concat_table . $key . ' as TABLE' . $table . 'TABLE_' . $key . ',';
+                        $fields .= $concat_table . $key . ' as TABLE' . $alias_table . 'TABLE_' . $key . ',';
 
                     }
 
@@ -59,7 +71,7 @@ abstract class BaseModelMethods
             // прохожу по полям $set['fields']
             foreach ($set['fields'] as $field){
 
-                if ($join_structure && !$id_field && $this->tableRows[$table] === $field){
+                if ($join_structure && !$id_field && $this->tableRows[$alias_table] === $field){
 
                     $id_field = true;
 
@@ -67,9 +79,17 @@ abstract class BaseModelMethods
                 // если $field
                 if ($field){
                     // если это метод join И $join_structure И $field не псевдоним
-                    if ($join && $join_structure && !preg_match('/\s+as\s+/i', $field)){
+                    if ($join && $join_structure){
 
-                        $fields .= $concat_table . $field . ' as TABLE' . $table . 'TABLE_' . $field . ',';
+                        if (preg_match('/^(.+)?\s+as\s+(.+)/i', $field, $matches)){
+
+                            $fields .= $concat_table . $matches[1] . ' as TABLE' . $alias_table . 'TABLE_' . $matches[2] . ',';
+
+                        }else{
+
+                            $fields .= $concat_table . $field . ' as TABLE' . $alias_table . 'TABLE_' . $field . ',';
+
+                        }
 
                     }else{
                         // иначе в $fields добавляю $concat_table и поля
@@ -85,11 +105,11 @@ abstract class BaseModelMethods
                 // если это метод join
                 if ($join){
                     // создаю строку для запроса
-                    $fields .= $concat_table . $this->tableRows[$table]['id_row'] . ' as TABLE' . $table . 'TABLE_' .$this->tableRows[$table]['id_row'] . ',';
+                    $fields .= $concat_table . $this->tableRows[$alias_table]['id_row'] . ' as TABLE' . $alias_table . 'TABLE_' .$this->tableRows[$alias_table]['id_row'] . ',';
 
                 }else{
 
-                    $fields .= $concat_table . $this->tableRows[$table]['id_row'] . ',';
+                    $fields .= $concat_table . $this->tableRows[$alias_table]['id_row'] . ',';
 
                 }
 
@@ -102,16 +122,20 @@ abstract class BaseModelMethods
     }
     //метод создания строки сортировки для запроса
     protected function createOrder($set, $table = false){
-        // если в $table что то пришло и не $set['no_concat'] то записываю и конкатенирую точку,
-        $table = ($table && !$set['no_concat']) ? $table . '.' : '';
+        // если в $table что то пришло и не $set['no_concat'] то записываю алиас(псевдоним) таблицы и конкатенирую
+        // точку, иначе записываю пустую строку
+        $table = ($table && (!isset($set['no_concat']) || !$set['no_concat']))
+                ? $this->createTableAlias($table)['alias'] . '.' : '';
         // записываю в переменную пустую строку
         $order_by = '';
         // если $set масив и он не пустой
-        if (is_array($set['order']) && !empty($set['order'])){
+        if (isset($set['order']) && $set['order']){
+
+            $set['order'] = (array)$set['order'];
             // если есть order_direction и он является массиво и он не пустой я его записываю, иначе записываю ['ASC']
-            $set['order_direction'] = (is_array($set['order_direction'])
-                && !empty($set['order_direction']))
-                ? $set['order_direction'] : ['ASC'];
+            $set['order_direction'] = (isset($set['order_direction'])
+                && $set['order_direction'])
+                ? (array)$set['order_direction'] : ['ASC'];
             // по умолчанию записываю в переменную 'ORDER BY '
             $order_by = 'ORDER BY ';
             // ставлю счётчик 0
@@ -127,8 +151,9 @@ abstract class BaseModelMethods
                 }else{ // если ничего не пришло записываю ['ASC']
                     $order_direction = strtoupper($set['order_direction'][$direct_count - 1]);
                 }
+                if (in_array($order, $this->sqlFunc)) $order_by .= $order . ',';
                 // если пришло число вместо операнда то сортирую по порядковому номеру поля
-                if (is_int($order)) $order_by .= $order . ' ' . $order_direction . ',';
+                elseif (is_int($order)) $order_by .= $order . ' ' . $order_direction . ',';
                 else $order_by .= $table . $order . ' ' . $order_direction . ',';// присоединяю к переменной строку
                 // запроса где $table это таблица, $order поле запроса
                 // $order_direction направление запроса - DESC, ASC
@@ -143,8 +168,9 @@ abstract class BaseModelMethods
     //метод создания строки запроса WHERE
     protected function createWhere($set, $table = false, $instruction = 'WHERE'){
 
-        // если в $table что то пришло и не $set['no_concat'] то записываю и конкатенирую точку,
-        $table = ($table && !$set['no_concat']) ? $table . '.' : '';
+        // если в $table что то пришло и не $set['no_concat'] то записываю алиас(псевдоним) и конкатенирую точку,
+        $table = ($table && (!isset($set['no_concat']) || !$set['no_concat']))
+            ? $this->createTableAlias($table)['alias'] . '.' : '';
         // записываю в переменную пустую строку
         $where = '';
         // если пришла строка $set['where']
@@ -256,27 +282,27 @@ abstract class BaseModelMethods
                     if (!$item['table']) continue; // и если это не ключ table, перехожу на следущую итерацию цикла
                     else $key = $item['table']; // иначе записываю в $key таблицу
                 }
+
+                $concatTable = $this->createTableAlias($key)['alias'];
                 // если в $join что то есть то присоединяем к ней пробел
                 if ($join) $join .= ' ';
                 // если $item содержит 'on'
-                if ($item['on']){
-                    $join_fields = [];// создаю пустой массив
+                if (isset($item['on']) && $item['on']){
+                    // создаю пустой массив $join_fields
+                    $join_fields = [];
 
-                    switch (2) { // если в массиве есть 2 элемента вида ['on']['fields']
-                        // если $item['on']['fields'] является массивом и если в поле ['on']['fields'] есть 2 элемента
-                        // массива
-                        case (is_array($item['on']['fields']) && count($item['on']['fields'])):
-                            $join_fields = $item['on']['fields']; // записываю эти поля
-                            break;
-                        // если $item['on'] является массивом и если поля для присоединения описаны в ячейке 'on'
-                        case (is_array($item['on']) && count($item['on'])): // посчитаем их, если их 2 то записываем их
-                            // в $join_fields
-                            $join_fields = $item['on'];
-                            break;
-                        default:
-                            // по дефолту конструкция continue выведет цикл на foreach
-                            continue 2;
-                            break;
+                    if (isset($item['on']['fields']) && is_array($item['on']['fields']) && count($item['on']['fields']) === 2){
+
+                        $join_fields = $item['on']['fields'];
+
+                    }elseif(count($item['on']) === 2){
+
+                        $join_fields = $item['on'];
+
+                    }else{
+
+                        continue;
+
                     }
                     // если не содержится типа присоединения, то по умолчанию записываю в $join - LEFT JOIN
                     if (!$item['type']) $join .= 'LEFT JOIN ';
@@ -285,11 +311,14 @@ abstract class BaseModelMethods
                     // к $join добавляем $key и к какой таблице её присоединяем ON
                     $join .= $key . ' ON ';
                     // если существует $item['on']['table'] то присоединяем её к $join
-                    if ($item['on']['table']) $join .= $item['on']['table'];
+                    if ($item['on']['table']) $join_temp_table = $item['on']['table'];
                     // если её не существует то добавляем таблицу которая пришла в метод в качестве аргумента
-                    else $join .= $join_table;
+                    else $join_temp_table = $join_table;
+                    // добавляю в $join результат работы метода createTableAlias передавая ему на вход
+                    // $join_temp_table и получаю ['alias']
+                    $join .= $this->createTableAlias($join_temp_table)['alias'];
                     // в $join добавляем поля которые пришли
-                    $join .= '.' . $join_fields[0] . '=' . $key . '.' . $join_fields[1];
+                    $join .= '.' . $join_fields[0] . '=' . $concatTable . '.' . $join_fields[1];
                     // присваиваю в $join_table текущую таблицу $key что бы следующая итерация цикла могла работать с
                     // предыдущей
                     $join_table = $key;
@@ -468,7 +497,83 @@ abstract class BaseModelMethods
 
     protected function joinStructure($res, $table){
 
+        $join_arr = [];
 
+        $id_row = $this->tableRows[$this->createTableAlias($table)['alias']]['id_row'];
+
+        foreach($res as $value){
+
+            if ($value){
+
+                if (!isset($join_arr[$value[$id_row]])) $join_arr[$value[$id_row]] = [];
+
+                foreach($value as $key => $item){
+
+                    if (preg_match('/TABLE(.+)?TABLE/u', $key, $matches)){
+
+                        $table_name_normal = $matches[1];
+
+                        if (!isset($this->tableRows[$table_name_normal]['multi_id_row'])){
+
+                            $join_id_row = $value[$matches[0] . '_' . $this->tableRows[$table_name_normal]['id_row']];
+
+                        }else{
+
+                            $join_id_row = '';
+
+                            foreach ($this->tableRows[$table_name_normal]['multi_id_row'] as $multi){
+
+                                $join_id_row .= $value[$matches[0] . '_' . $multi];
+
+                            }
+
+                        }
+                        // записываю в $row чистое название поля
+                        $row = preg_replace('/TABLE(.+)TABLE_/u', '', $key);
+
+                        if ($join_id_row && !isset($join_arr[$value[$id_row]]['join'][$table_name_normal][$join_id_row][$row])){
+
+                            $join_arr[$value[$id_row]]['join'][$table_name_normal][$join_id_row][$row] = $item;
+
+                        }
+
+                        continue;
+
+                    }
+
+                    $join_arr[$value[$id_row]][$key] = $item;
+
+                }
+
+            }
+
+        }
+
+        return $join_arr;
+
+    }
+    // служебный(промежутьочный) метод создания алиаса таблицы
+    protected function createTableAlias($table){
+        // объявляю пустой массив
+        $arr = [];
+        // если в $table есть пробел один или более раз
+        if (preg_match('/\s+/i', $table)){
+            // заменяю пробелы на один в $table, если из больше двух
+            $table = preg_replace('/\s{2,}/', ' ', $table);
+            // разбиваю $table по пробелам и записываю в $table_name
+            $table_name = explode(' ', $table);
+
+            $arr['table'] = trim($table_name[0]);
+
+            $arr['alias'] = trim($table_name[1]);
+
+        }else{
+
+            $arr['alias'] = $arr['table'] = $table;
+
+        }
+
+        return $arr;
 
     }
 
