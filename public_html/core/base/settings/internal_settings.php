@@ -5,6 +5,8 @@ use core\base\exceptions\RouteException;
 // denied'
 defined('VG_ACCESS') or die('Access denied');
 
+const MS_MODE = false; // разрешает если true или запрещает если false работу с IE(интернет эксплорер) браузером
+
 const TEMPLATE = 'templates/default/'; //шаблоны видов страниц пользовательской части сайта
 const ADMIN_TEMPLATE = 'core/admin/view/';//шаблоны видов страниц административной части сайта
 const UPLOAD_DIR = 'userfiles/';//директория для добавления изображений из административной панели

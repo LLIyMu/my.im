@@ -25,8 +25,103 @@ class Model extends BaseModel
                             REFERENCED_TABLE_NAME is not null $where";
 
         return $this->query($query);
+    }
 
-        exit();
+    public function updateMenuPosition($table, $row, $where, $end_pos, $update_rows = []){
+
+        if ($update_rows && isset($update_rows['where'])){
+            // если существует $update_rows['operand'] то его же и записываю, если нет записываю массив со значением равно ['=']
+            $update_rows['operand'] = isset($update_rows['operand']) ? $update_rows['operand'] : ['='];
+
+            if ($where){
+                // получаем старые данные
+                $old_data = $this->get($table, [
+                    'fields' => [$update_rows['where'], $row],
+                    'where' => $where
+                ])[0];
+                // в $start_pos(стартовая позиция) записываю данные которые есть в таблице на данный момент
+                // $old_data[$row](старые данные)
+                $start_pos = $old_data[$row];
+                // если предыдущий parent_id НЕ равент тому которые пришел из массива $_POST
+                if ($old_data[$update_rows['where']] !== $_POST[$update_rows['where']]){
+                    // в $pos получаю данные старых записей что бы проапдейтить таблицу относительно новых данных
+                    $pos = $this->get($table, [
+                        'fields' => ['COUNT(*) as count'],
+                        'where' => [$update_rows['where'] => $old_data[$update_rows['where']]],
+                        'no_concat' => true
+                    ])[0]['count'];
+                    // если стартовая(старя) позиция не равна $pos
+                    if ($start_pos != $pos){
+
+                        $update_where = $this->createWhere([
+                            'where' => [$update_rows['where'] => $old_data[$update_rows['where']]],
+                            'operand' => $update_rows['operand']
+                        ]);
+
+                        $query = "UPDATE $table SET $row = $row - 1 $update_where AND $row <= $pos AND $row > $start_pos";
+
+                        $this->query($query, 'u');
+
+                    }
+
+                    $start_pos = $this->get($table, [
+                        'fields' => ['COUNT(*) as count'],
+                        'where' => [$update_rows['where'] => $_POST[$update_rows['where']]],
+                        'no_concat' => true
+                    ])[0]['count'] + 1;
+
+                }
+
+            }else{
+
+                $start_pos = $this->get($table, [
+                        'fields' => ['COUNT(*) as count'],
+                        'where' => [$update_rows['where'] => $_POST[$update_rows['where']]],
+                        'no_concat' => true
+                    ])[0]['count'] + 1;
+
+            }
+
+            if (array_key_exists($update_rows['where'], $_POST)) $where_equal = $_POST[$update_rows['where']];
+            elseif (isset($old_data[$update_rows['where']])) $where_equal = $old_data[$update_rows['where']];
+            else $where_equal = NULL;
+
+            $db_where = $this->createWhere([
+                'where' => [$update_rows['where'] => $where_equal],
+                'operand' => $update_rows['operand']
+            ]);
+
+        }else{
+            // если пришла $where т.е. если это не добавление данных а редактирование
+            if ($where){
+                // в стартовую позицию $start_pos получаю данные обращаясь к модели и его методу через $this->get и
+                // записываю 0 элемент и его ячейку [$row]
+                $start_pos = $this->get($table, [
+                    'fields' => [$row],
+                    'where' => $where,
+                ])[0][$row];
+
+            }else{
+
+                $start_pos = $this->get($table, [
+                    'fields' => ['COUNT(*) as count'],
+                    'no_concat' => true
+                ])[0]['count'] + 1;
+
+            }
+
+        }
+
+        $db_where = isset($db_where) ? $db_where . ' AND' : 'WHERE';
+
+        if ($start_pos < $end_pos)
+            $query = "UPDATE $table SET $row = $row - 1 $db_where $row <= $end_pos AND $row > $start_pos";
+        elseif ($start_pos > $end_pos)
+            $query = "UPDATE $table SET $row = $row + 1 $db_where $row >= $end_pos AND $row < $start_pos";
+        else return;
+
+        return $this->query($query, 'u');
+
     }
 
 }

@@ -22,7 +22,7 @@ class FileEdit
                 // создаю пустой массив, куда буду записывать файлы
                 $file_arr = [];
                 // через цикл for прохожу по ячейке массива $_FILES и его $file['name']
-                for ($i = 0; $i < count($file['name']); $i++){
+                foreach ($file['name'] as $i => $value){
                     // если $file['name'][$i] не пустой
                     if (!empty($file['name'][$i])){
                         // заполняю массив

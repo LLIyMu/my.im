@@ -16,7 +16,6 @@ abstract class BaseController
     protected $content;
     protected $footer;
 
-
     //переменная для отображения страниц-видов-шаблонов
     protected $page;
     //для хранения ошибок
@@ -38,6 +37,8 @@ abstract class BaseController
     protected $userId;
     // свойство данных
     protected $data;
+
+    protected $ajaxData;
     // метод обрабатывающий входящие парматеры и передающий их методу request()
     public function route(){
         //сохраняю в переменную $controller имя класса с правильным слешем получаю из адресной строки

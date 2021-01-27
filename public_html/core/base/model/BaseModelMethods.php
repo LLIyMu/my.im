@@ -248,6 +248,9 @@ abstract class BaseModelMethods
                     if (strpos($item, 'SELECT') === 0){
                         // формирую вложенный запрос
                         $where .= $table . $key . $operand . '(' . $item . ") $condition";
+                    }elseif ($item === null || $item === 'NULL'){
+                        if ($operand === '=') $where .= $table . $key . ' IS NULL ' . $condition;
+                            else $where .= $table . $key . ' IS NOT NULL ' . $condition;
                     }else{
                         $where .= $table . $key . $operand . "'" . addslashes($item) . "' $condition";
                     }
@@ -469,7 +472,7 @@ abstract class BaseModelMethods
                 // если пришла функция то записываю её в запрос без обработки
                 if (in_array($value, $this->sqlFunc)){
                     $update .= $value . ',';
-                }elseif ($value === NULL){
+                }elseif ($value === NULL || $value === 'NULL'){
                     $update .= "NULL" . ',';
                 }else{// иначе обрабатываю значение кавычками
                     $update .= "'" .addslashes($value) . "',";

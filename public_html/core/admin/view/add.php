@@ -1,4 +1,5 @@
-<form class="vg-wrap vg-element vg-ninteen-of-twenty" method="post" action="<?= $this->adminPath . $this->action ?>"
+<form id="main-form" class="vg-wrap vg-element vg-ninteen-of-twenty" method="post" action="<?= $this->adminPath .
+$this->action ?>"
       enctype="multipart/form-data">
     <div class="vg-wrap vg-element vg-full">
         <div class="vg-wrap vg-element vg-full vg-firm-background-color4 vg-box-shadow">
@@ -8,7 +9,7 @@
                 </div>
                 <?php if (!$this->noDelete && $this->data):?>
                     <div class="vg-element vg-padding-in-px">
-                        <a href=""
+                        <a href="<?=$this->adminPath . 'delete/' . $this->table . '/' . $this->data[$this->columns['id_row']]?>"
                            class="vg-text vg-firm-color1 vg-firm-background-color4 vg-input vg-button vg-center vg_delete">
                             <span>Удалить</span>
                         </a>
@@ -19,7 +20,7 @@
     </div>
 
     <?php if ($this->data): ?>
-        <input type="hidden" name="<?= $this->columns['id_row'] ?>" value="<?= $this->data[$this->columns['id_row']]?>">
+        <input id="tableId" type="hidden" name="<?= $this->columns['id_row'] ?>" value="<?= $this->data[$this->columns['id_row']]?>">
     <?php endif; ?>
 
     <input type="hidden" name="table" value="<?= $this->table ?>">
@@ -45,7 +46,7 @@
                         if (in_array($row, $items)){
 
                             if (!@include $_SERVER['DOCUMENT_ROOT'] . $this->formTemplates . $template .'.php'){
-                                throw new \core\base\exceptions\RouteException('Не найде наблон' .
+                                throw new \core\base\exceptions\RouteException('Не найден наблон' .
                                     $_SERVER['DOCUMENT_ROOT'] . $this->formTemplates . $template .'.php');
                             }
 

@@ -42,3 +42,379 @@ Fault: 14-01-2021 7:35:39 - Ошибка в SQL запросе: SELECT goods.*,f
 file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
 In line 43
 
+Fault: 14-01-2021 14:12:51 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 14:15:24 - Ошибка в SQL запросе: SELECT goods.*,filters.name as student_name,filters.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters ON goods_filters.students=filters.id LEFT JOIN filters ON filters.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1066 Not unique table/alias: 'filters'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 18:42:04 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 18:51:41 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 18:53:12 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 18:56:16 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:00:14 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:00:27 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:00:28 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:07:23 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:07:29 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:07:54 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:10:48 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:13:32 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:14:33 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:20:07 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:21:25 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:21:28 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:21:30 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:22:53 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:23:03 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:23:21 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:23:22 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:23:23 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:23:30 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:32:09 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:32:11 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:32:26 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:33:36 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:33:39 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:33:41 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:33:42 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 19:34:06 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:00:57 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:01:39 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:02:00 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:06:23 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:08:47 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:11:11 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:11:23 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:11:25 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:11:29 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:11:30 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 14-01-2021 20:11:31 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 15-01-2021 11:19:30 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 15-01-2021 11:20:17 - Ошибка в SQL запросе: SELECT filters.id as id,filters.name,filters.parent_id FROM filters   ORDER BY filters.name ASC  - 1054 Unknown column 'filters.parent_id' in 'field list'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 15-01-2021 17:15:08 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 15-01-2021 18:41:54 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 16-01-2021 8:58:31 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 16-01-2021 14:58:24 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 16-01-2021 18:41:54 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 16-01-2021 19:51:51 - Ошибка в SQL запросе: INSERT INTO filters (name,visible,parent_id,menu_position,content) VALUES ('Height','1',0,'2','') - 1452 Cannot add or update a child row: a foreign key constraint fails (`im`.`filters`, CONSTRAINT `filters_filters_id_fk` FOREIGN KEY (`parent_id`) REFERENCES `filters` (`id`))
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 16-01-2021 20:00:46 - Ошибка в SQL запросе: INSERT INTO filters (name,visible,parent_id,menu_position,content) VALUES ('Height','1',0,'2','') - 1452 Cannot add or update a child row: a foreign key constraint fails (`im`.`filters`, CONSTRAINT `filters_filters_id_fk` FOREIGN KEY (`parent_id`) REFERENCES `filters` (`id`))
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 18-01-2021 5:04:57 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 19-01-2021 11:25:31 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 19-01-2021 11:26:32 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 19-01-2021 11:39:09 - Ошибка в SQL запросе: UPDATE filters SET menu_position = menu_position + 1 WHERE menu_position >= 2 AND menu_position < 3 - 2006 MySQL server has gone away
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 19-01-2021 16:27:26 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 19-01-2021 19:40:47 - Ошибка в SQL запросе: SELECT goods_filters.filters_id FROM goods_filters  WHERE goods_filters.0='goods_9'    - 1054 Unknown column 'goods_filters.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 19-01-2021 19:40:54 - Ошибка в SQL запросе: SELECT goods_filters.filters_id FROM goods_filters  WHERE goods_filters.0='goods_9'    - 1054 Unknown column 'goods_filters.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 19-01-2021 19:42:53 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 3:57:52 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 3:59:06 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:03:50 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:04:16 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:09:24 - Ошибка в SQL запросе: SELECT goods.* FROM goods  WHERE goods.id='9'    - 2006 MySQL server has gone away
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:12:45 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:24:11 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:34:26 - Ошибка в SQL запросе: SHOW COLUMNS FROM goods - 2006 MySQL server has gone away
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:35:09 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:46:22 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.alias='good4888' AND goods.id<>'9'   LIMIT 1 - 2006 MySQL server has gone away
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:49:05 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:51:57 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 4:53:11 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 11:26:32 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 12:31:06 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 12:33:54 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 12:36:50 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 12:38:53 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 13:57:11 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 13:58:53 - Ошибка в SQL запросе: SELECT goods_filters.filters_id FROM goods_filters  WHERE goods_filters.0='goods_9'    - 1054 Unknown column 'goods_filters.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 14:05:44 - Ошибка в SQL запросе: SELECT goods.alias FROM goods  WHERE goods.0='9'    - 1054 Unknown column 'goods.0' in 'where clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 20-01-2021 16:55:48 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 21-01-2021 3:30:41 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 22-01-2021 4:45:13 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 22-01-2021 4:46:17 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 22-01-2021 14:27:24 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 23-01-2021 5:57:48 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 23-01-2021 5:58:48 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 25-01-2021 3:22:05 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 25-01-2021 3:23:05 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 26-01-2021 5:18:59 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 26-01-2021 5:27:50 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+
+Fault: 27-01-2021 5:18:59 - Ошибка в SQL запросе: SELECT goods.*,f.name as student_name,f.content,filters.* FROM goods LEFT JOIN goods_filters ON goods.id=goods_filters.teachers LEFT JOIN filters f ON goods_filters.students=f.id LEFT JOIN filters ON f.parent_id=filters.id WHERE goods.id IN ('5','6')  ORDER BY goods.id DESC  - 1054 Unknown column 'goods_filters.teachers' in 'on clause'
+file F:\OpenServer\domains\my.im\public_html\core\base\model\BaseModel.php
+In line 43
+

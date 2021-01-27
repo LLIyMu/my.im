@@ -1,0 +1,40 @@
+Fault: 14-01-2021 15:29:11 - Не найде наблонF:/OpenServer/domains/my.im/public_html/core/admin/view/include/form_templates/checkboxlist.php
+file F:\OpenServer\domains\my.im\public_html\core\admin\view\add.php
+In line 48
+
+Fault: 21-01-2021 4:33:00 - Не верное имя файла для подключения - core/user/controller/UserfilesController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 36
+
+Fault: 21-01-2021 4:33:06 - Не верное имя файла для подключения - core/user/controller/UserfilesController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 36
+
+Fault: 21-01-2021 4:41:19 - Не верное имя файла для подключения - core/user/controller/UserfilesController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 36
+
+Fault: 21-01-2021 4:41:34 - Не верное имя файла для подключения - core/user/controller/UserfilesController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 36
+
+Fault: 21-01-2021 4:44:00 - Не верное имя файла для подключения - core/user/controller/UserfilesController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 36
+
+Fault: 22-01-2021 4:46:35 - Не верное имя файла для подключения - core/user/controller/UserfilesController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 36
+
+Fault: 22-01-2021 14:49:21 - Class core\user\controller\Robots.txtController does not exist
+file F:\OpenServer\domains\my.im\public_html\core\base\controller\BaseController.php
+In line 60
+
+Fault: 26-01-2021 6:54:23 - Не корректный идентификатор -  при редактировании таблицы - goods
+file F:\OpenServer\domains\my.im\public_html\core\admin\controller\EditController.php
+In line 51
+
+Fault: 26-01-2021 17:12:56 - Не верное имя файла для подключения - core/plugins/shop/DeleteController
+file F:\OpenServer\domains\my.im\public_html\core\base\settings\internal_settings.php
+In line 38
+

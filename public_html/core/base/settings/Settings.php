@@ -53,20 +53,23 @@ class Settings
     private $formTemplates = PATH . 'core/admin/view/include/form_templates/';
 
     private $projectTables = [
+        'articles' => ['name' => 'Статьи'],
+        'pages' => ['name' => 'Страницы'],
         'goods' => ['name' => 'Товары', 'img' => 'pages.png'],
         'filters' => ['name' => 'Фильтры']
     ];
     // массив шаблонов
     private $templateArr = [
         'text' => ['name'],
-        'textarea' => ['keywords', 'content'],
+        'textarea' => ['keywords', 'content', [1,2,3,4]],
         'radio' => ['visible'],
         'checkboxlist' => ['filters'],
         'select' => ['menu_position', 'parent_id'],
-        'img' => ['img'],
-        'gallery_img' => ['gallery_img'],
-        'content' => []
+        'img' => ['img', 'main_img'],
+        'gallery_img' => ['gallery_img', 'new_gallery_img'],
     ];
+
+    private $fileTemplates = ['img', 'gallery_img'];
 
     private $translate = [
         'name' => ['Название', 'Не более 100 символов'],
@@ -79,8 +82,7 @@ class Settings
     // свойтсво корневых элементов (категория - подкатегория)
     private $rootItems = [
         'name' => 'Корневая',
-        'tables' => ['articles'],
-        'content' =>[]
+        'tables' => ['articles', 'filters']
     ];
 
     protected $manyToMany = [
@@ -89,8 +91,8 @@ class Settings
     // блоки для сорттировки меню (разделитель блоков)
     private $blockNeedle = [
         'vg-rows' => [],
-        'vg-img' => ['img'],
-        'vg-content' => ['content', 'textarea']
+        'vg-img' => ['img', 'main_img'],
+        'vg-content' => ['content']
     ];
     // свойство валидации, добавляю сюда то что нужно будет отвалидировать перед добавлением в БД
     private $validation = [

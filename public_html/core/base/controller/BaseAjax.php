@@ -17,8 +17,11 @@ class BaseAjax extends BaseController
         $controller = $route['user']['path'] . 'AjaxController';
         // если есть $this->isPost() то записываю $_POST иначе записываю $_GET в $data
         $data = $this->isPost() ? $_POST : $_GET;
+
+        $httpReferer = str_replace('/', '\/', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . PATH .
+            $route['admin']['alias']);
         // если существует $data['ADMIN_MODE']
-        if (isset($data['ADMIN_MODE'])){
+        if (isset($data['ADMIN_MODE']) || preg_match('/^'. $httpReferer . '(\/?|$)/', $_SERVER['HTTP_REFERER'])){
             // разрегистрирую его
             unset($data['ADMIN_MODE']);
             // и в контроллер записываю роут до ajax контроллера
@@ -29,14 +32,14 @@ class BaseAjax extends BaseController
         // создаю объект $controller
         $ajax = new $controller;
         // вызываю метод createAjaxData
-        $ajax->createAjaxData($data);
+        $ajax->ajaxData = $data;
         // возвращаю ajax
-        return ($ajax->ajax());
+        $res = $ajax->ajax();
+
+        if (is_array($res) || is_object($res)) $res = json_encode($res);
+        elseif (is_int($res)) $res = (float)$res;
+
+        return $res;
     }
 
-    protected function createAjaxData($data){
-
-        $this->data = $data;
-
-    }
 }

@@ -1,4 +1,4 @@
-<div class="vg-wrap vg-element vg-full vg-box-shadow">
+<div class="vg-element vg-full vg-box-shadow">
     <div class="vg-wrap vg-element vg-full vg-box-shadow">
         <div class="vg-wrap vg-element vg-full">
             <div class="vg-element vg-full vg-left">
@@ -11,7 +11,8 @@
         <div class="vg-element vg-full">
             <div class="vg-element vg-full vg-left">
                 <textarea name="<?=$row?>" class="vg-input vg-text vg-full vg-firm-color1"><?= isset
-                ($_SESSION['res'][$row]) ? htmlspecialchars($_SESSION['res'][$row]) : htmlspecialchars($this->data[$row]) ?></textarea>
+                    ($_SESSION['res'][$row]) ? htmlspecialchars($_SESSION['res'][$row]) : htmlspecialchars($this->data[$row]) ?>
+                </textarea>
             </div>
         </div>
     </div>

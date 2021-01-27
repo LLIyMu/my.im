@@ -4,45 +4,59 @@
 namespace core\admin\controller;
 
 
+use core\base\exceptions\RouteException;
+
 class EditController extends BaseAdmin
 {
+
+    // свойство для определения пути к шаблону
+    protected $action = 'edit';
 
     protected function inputData(){
 
         // вызываю родительский метод, который инициализирует и запускает все нужные методы
         if (!$this->userId) $this->execBase();
 
-    }
+        $this->checkPost();
 
-    protected function checkOldAlias($id){
+        $this->createTableData();
 
-        $tables = $this->model->showTables();
+        $this->createData();
 
-        if (in_array('old_alias', $tables)){
+        $this->createForeignData();
 
-            $old_alias = $this->model->get($this->table, [
-                'fields' => ['alias'],
-                'where' => [$this->columns['id_row'] = $id]
-            ])[0]['alias'];
+        $this->createMenuPosition();
 
-            if ($old_alias && $old_alias !== $_POST['alias']){
+        $this->createRadio();
 
-                $this->model->delete('old_alias', [
-                    'where' => ['alias' => $old_alias, 'table_name' => $this->table]
-                ]);
+        $this->createOutputData();
 
-                $this->model->delete('old_alias', [
-                    'where' => ['alias' => $_POST['alias'], 'table_name' => $this->table]
-                ]);
+        $this->createManyToMany();
 
-                $this->model->add('old_alias', [
-                    'fields' => ['alias' => $old_alias, 'table_name' => $this->table, 'table_id' => $id]
-                ]);
+        $this->template = ADMIN_TEMPLATE . 'add';
 
-            }
-
-        }
+        return $this->expansion();
 
     }
+
+    protected function createData(){
+
+        // записываю в $id значение по условию - если параметры($this->parameters) таблицы ([$this->table]) это число
+        // то записываю приведенное к нормальному числу значение, иначе
+        // записываю очищаю строку
+        $id = is_numeric($this->parameters[$this->table]) ?
+            $this->clearNum($this->parameters[$this->table]) :
+            $this->clearStr($this->parameters[$this->table]);
+
+        if (!$id) throw new RouteException( 'Не корректный идентификатор - ' . $id . ' при редактировании таблицы - ' . $this->table);
+
+        $this->data = $this->model->get($this->table, [
+            'where' => [$this->columns['id_row'] => $id]
+        ]);
+
+        $this->data && $this->data = $this->data[0];
+
+    }
+
 
 }
